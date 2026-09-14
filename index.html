@@ -170,6 +170,7 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
   background:var(--surface-2); color:var(--ink-2); border:1px solid var(--line)}
 .chip.src{background:var(--navy-soft); color:var(--navy); border-color:transparent}
 .chip.warn{background:var(--brass-soft); color:var(--brass); border-color:transparent}
+.chip.rep{background:var(--ok-soft); color:var(--ok); border-color:transparent}
 .qtext{font-family:var(--f-disp); font-size:19px; font-weight:500; line-height:1.6; margin:0 0 18px}
 
 .opts{display:flex; flex-direction:column; gap:8px; list-style:none; padding:0; margin:0}
@@ -448,6 +449,8 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
 (function(){
 "use strict";
 var BANK = window.BANK || [], SHEETS = window.SHEETS || [];
+/* questions are tagged by language: the Arabic paper and the French paper are different exams */
+function bank(){ return BANK.filter(function(q){ return (q.lang || "ar") === lang; }); }
 var KEYS = ["أ","ب","ج","د","هـ"];
 var LS = "dgsn-prep-v1";
 
@@ -456,7 +459,7 @@ var I18N = {
  ar:{
   dir:"rtl", htmlLang:"ar",
   brand:"تحضير مباراة الأمن الوطني",
-  tagline:"371 سؤالا مُتحقَّقا · دورات 2016 / 2017 / 2019 · 14 ملخصا محيَّنا",
+  tagline:"386 سؤالا مُتحقَّقا · دورات 2016 · 2017 · 2019 · 2025 · 14 ملخصا",
   theme:"تبديل السِّمة", reset:"تصفير التقدم",
   tabs:["لوحة التقدم","تدريب","محاكاة الامتحان","مراجعة الأخطاء","الملخصات"],
   eyebrowHome:"المديرية العامة للأمن الوطني", homeTitle:"لوحة التقدم",
@@ -483,6 +486,7 @@ var I18N = {
   weakGo:"اذهب إلى التدريب", weakN1:" سؤالا تنتظر المراجعة. السؤال يخرج من القائمة بعد أن تصيبه <b>ثلاث مرات متتالية</b>.",
   weakStart:"ابدأ المراجعة",
   fixedBadge:"✏️ مُصحَّح بعد التحقق", adLabel:"إعلان",
+  repBadge:"⭐ تكرر في {n} دورات",
   correctOfA:" صحيحة من ", examNoFeedback:"لا تصحيح قبل النهاية — كما في المباراة.",
   chooseHint:"اختر إجابة لعرض التصحيح والتعليل.",
   next:"التالي", nextQ:"السؤال التالي", skip:"تخطّي", finish:"إنهاء وعرض النتيجة",
@@ -503,7 +507,7 @@ var I18N = {
  fr:{
   dir:"ltr", htmlLang:"fr",
   brand:"Préparation au concours de la Sûreté nationale",
-  tagline:"371 questions vérifiées · sessions 2016 / 2017 / 2019 · 14 fiches à jour",
+  tagline:"49 questions · épreuve de français 2025 · 6 fiches en français",
   theme:"Changer de thème", reset:"Réinitialiser",
   tabs:["Tableau de bord","Entraînement","Simulation","Révision des erreurs","Fiches"],
   eyebrowHome:"Direction générale de la Sûreté nationale", homeTitle:"Tableau de bord",
@@ -516,8 +520,8 @@ var I18N = {
   cSheetsT:"Fiches", cSheetsD:"14 fiches : Constitution, procédure pénale, lexique juridique, plan sur 8 semaines…",
   masteryH:"Maîtrise par axe", masteryP:"Du plus faible au plus solide. Les axes non abordés figurent en bas.",
   qShort:" q.",
-  noteA:"<b>À propos des réponses :</b> les sujets des sessions circulent sans corrigé officiel. Les réponses et explications ont été établies à partir des textes juridiques en vigueur et de sources officielles à jour. <b>Chaque question douteuse a été vérifiée et corrigée</b> : ",
-  noteB:" questions ont vu leur réponse ou leurs propositions rectifiées — elles portent la marque ✏️ avec le motif de la correction. Les questions invérifiables ont été retirées.",
+  noteA:"<b>Ce mode contient l'épreuve écrite de français</b> du concours des inspecteurs de police (session du 7 décembre 2025), transcrite depuis le sujet et corrigée question par question. Les inspecteurs passent deux écrits : celui-ci et l'épreuve en arabe — basculez en العربية pour les 386 questions du bloc arabe. Questions rectifiées ici : ",
+  noteB:".",
   drillEye:"Mode entraînement", drillTitle:"Choisissez vos axes de révision",
   drillLede:"La correction et l'explication s'affichent dès votre choix. Laissez la sélection vide pour couvrir tous les axes.",
   drillStart:"Commencer", drillClear:"Effacer la sélection", drillCount:" questions dans cette série",
@@ -530,6 +534,7 @@ var I18N = {
   weakGo:"Aller à l'entraînement", weakN1:" questions attendent d'être revues. Une question quitte la liste après <b>trois bonnes réponses consécutives</b>.",
   weakStart:"Commencer la révision",
   fixedBadge:"✏️ Corrigée après vérification", adLabel:"Publicité",
+  repBadge:"⭐ Tombée {n} fois",
   correctOfA:" correctes sur ", examNoFeedback:"Aucune correction avant la fin — comme au concours.",
   chooseHint:"Choisissez une réponse pour voir la correction et l'explication.",
   next:"Suivante", nextQ:"Question suivante", skip:"Passer", finish:"Terminer et voir le résultat",
@@ -676,7 +681,7 @@ function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
 function shuffle(a){ a = a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 function cats(){
   var m = {};
-  BANK.forEach(function(q){ (m[q.cat] = m[q.cat] || []).push(q); });
+  bank().forEach(function(q){ (m[q.cat] = m[q.cat] || []).push(q); });
   return m;
 }
 function mastery(list){
@@ -774,13 +779,14 @@ function render(){
 }
 
 function renderHome(){
-  var total = BANK.length;
+  var B = bank();
+  var total = B.length;
   var attempted = 0, mastered = 0, weak = 0;
-  BANK.forEach(function(q){
+  B.forEach(function(q){
     var r = store.seen[q.id];
     if(r && r.n){ attempted++; if(r.box >= 3) mastered++; if(r.ok/r.n < 0.5) weak++; }
   });
-  var m = mastery(BANK);
+  var m = mastery(B);
   var cm = cats();
   var rows = Object.keys(cm).map(function(c){
     var st = mastery(cm[c]);
@@ -790,7 +796,7 @@ function renderHome(){
     if(a.pct === null) return 1; if(b.pct === null) return -1;
     return a.pct - b.pct;
   });
-  var corrected = BANK.filter(function(q){ return q.fixed; }).length;
+  var corrected = B.filter(function(q){ return q.fixed; }).length;
 
   var h = '';
   h += '<p class="eyebrow">'+t("eyebrowHome")+'</p>';
@@ -886,7 +892,7 @@ function setupHTML(mode){
 }
 
 function weakPool(){
-  return BANK.filter(function(q){
+  return bank().filter(function(q){
     var r = store.seen[q.id];
     return r && r.n > 0 && r.box < 3;
   }).sort(function(a,b){
@@ -913,10 +919,11 @@ function wireSetup(el, mode){
   var st = el.querySelector("[data-start]");
   if(st) st.addEventListener("click", function(){
     if(mode === "drill"){
-      var pool = drillSel.length ? BANK.filter(function(q){ return drillSel.indexOf(q.cat) > -1; }) : BANK.slice();
+      var pool = drillSel.length ? bank().filter(function(q){ return drillSel.indexOf(q.cat) > -1; }) : bank().slice();
       startSession("drill", shuffle(pool), null);
     } else if(mode === "exam"){
-      startSession("exam", shuffle(BANK).slice(0, Math.min(50, BANK.length)), 60);
+      var eb = bank();
+      startSession("exam", shuffle(eb).slice(0, Math.min(50, eb.length)), 60);
     } else {
       startSession("weak", weakPool().slice(0, 30), null);
     }
@@ -924,7 +931,7 @@ function wireSetup(el, mode){
 }
 function updCount(el){
   var s = el.querySelector("#selCount"); if(!s) return;
-  var n = drillSel.length ? BANK.filter(function(q){ return drillSel.indexOf(q.cat) > -1; }).length : BANK.length;
+  var n = drillSel.length ? bank().filter(function(q){ return drillSel.indexOf(q.cat) > -1; }).length : bank().length;
   s.textContent = n + t("drillCount");
 }
 
@@ -945,6 +952,7 @@ function quizHTML(){
 
   h += '<article class="qcard'+(isFr()?' rtl-content':'')+'">';
   h += '<div class="qmeta"><span class="chip src">'+esc(q.src)+'</span><span class="chip">'+esc(q.cat)+'</span>';
+  if(q.reps > 1) h += '<span class="chip rep" title="'+esc((q.srcs||[]).join(" · "))+'">'+t("repBadge").replace("{n}", q.reps)+'</span>';
   if(q.fixed) h += '<span class="chip warn">'+t("fixedBadge")+'</span>';
   h += '</div>';
   h += '<h2 class="qtext">'+esc(q.q)+'</h2>';
