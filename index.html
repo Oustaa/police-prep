@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="بنك أسئلة وملخصات لتحضير مباريات الأمن الوطني بالمغرب: 374 سؤالا من دورات 2016 و2017 و2019 مع التعليل، ومحاكاة للاختبار الكتابي، و14 ملخصا قانونيا ومنهجيا.">
+<meta name="description" content="بنك أسئلة وملخصات لتحضير مباريات الأمن الوطني بالمغرب: 371 سؤالا من دورات 2016 و2017 و2019 بأجوبة متحقَّق منها، ومحاكاة للاختبار الكتابي، و14 ملخصا قانونيا محيَّنا.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="تحضير مباراة الأمن الوطني">
-<meta property="og:description" content="374 سؤالا بأجوبة معللة، محاكاة للامتحان، و14 ملخصا قانونيا ومنهجيا.">
+<meta property="og:description" content="371 سؤالا بأجوبة متحقَّق منها، محاكاة للامتحان، و14 ملخصا قانونيا محيَّنا.">
 <meta property="og:type" content="website">
 <title>تحضير مباراة الأمن الوطني</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -271,7 +271,7 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
     <div class="crest">🛡</div>
     <div class="brand">
       <b>تحضير مباراة الأمن الوطني</b>
-      <span>374 سؤالا · دورات 2016 / 2017 / 2019 · 14 ملخصا قانونيا ومنهجيا</span>
+      <span>371 سؤالا مُتحقَّقا · دورات 2016 / 2017 / 2019 · 14 ملخصا محيَّنا</span>
     </div>
     <button class="ghost" id="themeBtn" type="button">تبديل السِّمة</button>
     <button class="ghost" id="resetBtn" type="button">تصفير التقدم</button>
@@ -478,7 +478,7 @@ function renderHome(){
     if(a.pct === null) return 1; if(b.pct === null) return -1;
     return a.pct - b.pct;
   });
-  var flagged = BANK.filter(function(q){ return q.flag; }).length;
+  var corrected = BANK.filter(function(q){ return q.fixed; }).length;
 
   var h = '';
   h += '<p class="eyebrow">المديرية العامة للأمن الوطني</p>';
@@ -512,7 +512,7 @@ function renderHome(){
   });
   h += '</div></div>';
 
-  h += '<p class="note"><b>ملاحظة عن الأجوبة:</b> أوراق الدورات السابقة تُنشر <b>بدون شبكة تصحيح رسمية</b>. الأجوبة والتعليلات هنا مُستنتجة من النصوص القانونية الجاري بها العمل، وليست أجوبة رسمية. '+flagged+' سؤالا مُعلَّمة بـ ⚠️ لأن صياغتها ملتبسة أو خياراتها ناقصة أو معطياتها مرتبطة بتاريخها — تحقّق منها من مصدر رسمي قبل اعتمادها.</p>';
+  h += '<p class="note"><b>عن الأجوبة:</b> أوراق الدورات تُنشر بدون شبكة تصحيح رسمية، فحُرِّرت الأجوبة والتعليلات هنا انطلاقا من النصوص القانونية الجاري بها العمل ومن مصادر رسمية مُحيَّنة. <b>راجَعنا كل سؤال مشكوك فيه وصحّحناه</b>: '+corrected+' سؤالا عُدِّلت إجابته أو خياراته وتحمل علامة ✏️ مع بيان سبب التصحيح، وحُذفت الأسئلة التي تعذّر التحقق منها.</p>';
 
   h += adUnit(ADS.slotDashboard);
 
@@ -633,7 +633,7 @@ function quizHTML(){
 
   h += '<article class="qcard">';
   h += '<div class="qmeta"><span class="chip src">'+esc(q.src)+'</span><span class="chip">'+esc(q.cat)+'</span>';
-  if(q.flag) h += '<span class="chip warn">⚠️ تحقّق من هذا السؤال</span>';
+  if(q.fixed) h += '<span class="chip warn">✏️ مُصحَّح بعد التحقق</span>';
   h += '</div>';
   h += '<h2 class="qtext">'+esc(q.q)+'</h2>';
   h += '<ul class="opts">';
