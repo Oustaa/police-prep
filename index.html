@@ -169,7 +169,6 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
 .chip{font-size:11px; font-weight:600; padding:2.5px 9px; border-radius:999px;
   background:var(--surface-2); color:var(--ink-2); border:1px solid var(--line)}
 .chip.src{background:var(--navy-soft); color:var(--navy); border-color:transparent}
-.chip.warn{background:var(--brass-soft); color:var(--brass); border-color:transparent}
 .chip.rep{background:var(--ok-soft); color:var(--ok); border-color:transparent}
 .qtext{font-family:var(--f-disp); font-size:19px; font-weight:500; line-height:1.6; margin:0 0 18px}
 
@@ -472,8 +471,8 @@ var I18N = {
   cSheetsT:"الملخصات", cSheetsD:"14 ملخصا: الدستور، المسطرة الجنائية، المعجم القانوني، خطة 8 أسابيع…",
   masteryH:"الإتقان حسب المحور", masteryP:"مرتَّبة من الأضعف إلى الأقوى. المحاور غير المطروقة في الأسفل.",
   qShort:" س",
-  noteA:"<b>عن الأجوبة:</b> أوراق الدورات تُنشر بدون شبكة تصحيح رسمية، فحُرِّرت الأجوبة والتعليلات هنا انطلاقا من النصوص القانونية الجاري بها العمل ومن مصادر رسمية مُحيَّنة. <b>راجَعنا كل سؤال مشكوك فيه وصحّحناه</b>: ",
-  noteB:" سؤالا عُدِّلت إجابته أو خياراته وتحمل علامة ✏️ مع بيان سبب التصحيح، وحُذفت الأسئلة التي تعذّر التحقق منها.",
+  noteA:"<b>عن الأجوبة:</b> أوراق الدورات تُنشر بدون شبكة تصحيح رسمية، فحُرِّرت الأجوبة والتعليلات هنا انطلاقا من النصوص القانونية الجاري بها العمل ومن مصادر رسمية مُحيَّنة. راجَعنا كل سؤال مشكوك فيه وصحّحنا ما يستوجب التصحيح — وسبب كل تصحيح مذكور داخل تعليل السؤال نفسه. وحُذفت الأسئلة التي تعذّر التحقق منها.",
+  noteB:"",
   drillEye:"وضع التدريب", drillTitle:"اختر محاور المراجعة",
   drillLede:"التصحيح والتعليل يظهران فور اختيارك. اترك الاختيار فارغا لتشمل كل المحاور.",
   drillStart:"ابدأ التدريب", drillClear:"مسح الاختيار", drillCount:" سؤالا في هذه الجولة",
@@ -485,7 +484,7 @@ var I18N = {
   weakEmpty:"لا توجد أخطاء مسجّلة بعد. ابدأ بتدريب أو بمحاكاة امتحان، وستتجمّع هنا كل الأسئلة التي أخطأت فيها — مرتَّبة بحيث يعود إليك الأصعب أولا.",
   weakGo:"اذهب إلى التدريب", weakN1:" سؤالا تنتظر المراجعة. السؤال يخرج من القائمة بعد أن تصيبه <b>ثلاث مرات متتالية</b>.",
   weakStart:"ابدأ المراجعة",
-  fixedBadge:"✏️ مُصحَّح بعد التحقق", adLabel:"إعلان",
+  adLabel:"إعلان",
   repBadge:"⭐ تكرر في {n} دورات",
   correctOfA:" صحيحة من ", examNoFeedback:"لا تصحيح قبل النهاية — كما في المباراة.",
   chooseHint:"اختر إجابة لعرض التصحيح والتعليل.",
@@ -533,7 +532,7 @@ var I18N = {
   weakEmpty:"Aucune erreur enregistrée pour l'instant. Faites un entraînement ou une simulation : toutes vos questions manquées se rassembleront ici, les plus difficiles revenant en premier.",
   weakGo:"Aller à l'entraînement", weakN1:" questions attendent d'être revues. Une question quitte la liste après <b>trois bonnes réponses consécutives</b>.",
   weakStart:"Commencer la révision",
-  fixedBadge:"✏️ Corrigée après vérification", adLabel:"Publicité",
+  adLabel:"Publicité",
   repBadge:"⭐ Tombée {n} fois",
   correctOfA:" correctes sur ", examNoFeedback:"Aucune correction avant la fin — comme au concours.",
   chooseHint:"Choisissez une réponse pour voir la correction et l'explication.",
@@ -563,8 +562,8 @@ function isFr(){ return lang === "fr"; }
    ما دامت القيم فارغة، لا يُحمَّل أي سكريبت إعلاني ولا تظهر أي مساحة. */
 var ADS = {
   client: "ca-pub-9017597155293095",
-  slotDashboard: "",   // رقم الوحدة الإعلانية أسفل لوحة التقدم
-  slotResult: ""       // رقم الوحدة الإعلانية في صفحة النتيجة
+  slotDashboard: "7020447338",   // prepare-dgsn-Ad-1
+  slotResult: "2582369258"       // prepare-dgsn-Ad-2
 };
 var adsReady = false;
 function initAds(){
@@ -591,7 +590,22 @@ function pushAds(el){
     if(units[i].getAttribute("data-filled")) continue;
     units[i].setAttribute("data-filled", "1");
     try{ (window.adsbygoogle = window.adsbygoogle || []).push({}); }catch(e){}
+    watchFill(units[i]);
   }
+}
+/* AdSense stamps data-ad-status="unfilled" when it has nothing to serve
+   (always, until the site is approved). Collapse the container so the
+   page never shows an empty bordered placeholder. */
+function watchFill(ins){
+  var box = ins.closest(".adbox");
+  if(!box) return;
+  var tries = 0;
+  var iv = setInterval(function(){
+    var st = ins.getAttribute("data-ad-status");
+    if(st === "unfilled"){ box.hidden = true; clearInterval(iv); }
+    else if(st === "filled"){ clearInterval(iv); }
+    else if(++tries > 20){ if(!ins.firstChild) box.hidden = true; clearInterval(iv); }
+  }, 500);
 }
 
 /* ---------- storage ---------- */
@@ -830,7 +844,7 @@ function renderHome(){
   });
   h += '</div></div>';
 
-  h += '<p class="note">'+t("noteA")+corrected+t("noteB")+'</p>';
+  h += '<p class="note">'+t("noteA")+t("noteB")+'</p>';
 
   h += adUnit(ADS.slotDashboard);
 
@@ -953,7 +967,6 @@ function quizHTML(){
   h += '<article class="qcard'+(isFr()?' rtl-content':'')+'">';
   h += '<div class="qmeta"><span class="chip src">'+esc(q.src)+'</span><span class="chip">'+esc(q.cat)+'</span>';
   if(q.reps > 1) h += '<span class="chip rep" title="'+esc((q.srcs||[]).join(" · "))+'">'+t("repBadge").replace("{n}", q.reps)+'</span>';
-  if(q.fixed) h += '<span class="chip warn">'+t("fixedBadge")+'</span>';
   h += '</div>';
   h += '<h2 class="qtext">'+esc(q.q)+'</h2>';
   h += '<ul class="opts">';
