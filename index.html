@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="بنك أسئلة وملخصات لتحضير مباريات الأمن الوطني بالمغرب: 371 سؤالا من دورات 2016 و2017 و2019 بأجوبة متحقَّق منها، ومحاكاة للاختبار الكتابي، و14 ملخصا قانونيا محيَّنا.">
+<meta name="description" content="بنك أسئلة وملخصات لتحضير مباريات الأمن الوطني بالمغرب — Préparation au concours de la Sûreté nationale : 371 questions vérifiées et 14 fiches, en arabe et en français.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="تحضير مباراة الأمن الوطني">
-<meta property="og:description" content="371 سؤالا بأجوبة متحقَّق منها، محاكاة للامتحان، و14 ملخصا قانونيا محيَّنا.">
+<meta property="og:description" content="371 questions vérifiées, simulation d'examen et 14 fiches — العربية / Français.">
 <meta property="og:type" content="website">
 <title>تحضير مباراة الأمن الوطني</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap">
 <style>
 html,body{margin:0}
 img{max-width:100%}
@@ -30,6 +30,10 @@ img{max-width:100%}
   --r:10px;
   --f-disp:"Noto Kufi Arabic", system-ui, sans-serif;
   --f-body:"IBM Plex Sans Arabic", system-ui, sans-serif;
+}
+html[lang="fr"]{
+  --f-disp:"IBM Plex Sans Condensed","IBM Plex Sans", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", system-ui, sans-serif;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -54,6 +58,10 @@ img{max-width:100%}
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -16px rgba(0,0,0,.8);
 }
 html{direction:rtl}
+html[dir="ltr"]{direction:ltr}
+/* Arabic content shown inside a French shell keeps its own direction */
+.rtl-content{direction:rtl; text-align:right}
+html[lang="fr"] .qtext, html[lang="fr"] .opt > span:last-child, html[lang="fr"] .why{letter-spacing:0}
 *{box-sizing:border-box}
 body{
   background:var(--ground); color:var(--ink);
@@ -246,6 +254,25 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
 .doc tr:last-child td{border-bottom:0}
 .doc a{color:var(--navy)}
 
+.langwrap{display:flex; gap:0; border:1px solid var(--line-strong); border-radius:999px; overflow:hidden}
+.langwrap button{background:transparent; border:0; padding:6px 13px; font-size:12.5px;
+  font-weight:600; color:var(--muted); font-family:var(--f-body)}
+.langwrap button:hover{color:var(--ink)}
+.langwrap button[aria-pressed="true"]{background:var(--navy); color:var(--surface)}
+
+.scrim{position:fixed; inset:0; background:rgba(8,12,18,.62); z-index:60;
+  display:grid; place-items:center; padding:20px}
+.scrim[hidden]{display:none!important}
+.dialog{background:var(--surface); border:1px solid var(--line-strong); border-radius:12px;
+  max-width:430px; width:100%; padding:24px 26px; box-shadow:0 24px 60px -20px rgba(0,0,0,.55)}
+.dialog h2{font-size:17px; margin:0 0 8px}
+.dialog p{margin:0 0 6px; font-size:14.5px; color:var(--ink-2); line-height:1.6}
+.dialog .warnline{color:var(--bad); font-weight:600; font-size:13.5px; margin-top:10px}
+.dialog-foot{display:flex; gap:10px; justify-content:flex-end; margin-top:20px}
+.danger{background:var(--bad); color:#fff; border:1px solid var(--bad);
+  padding:9px 18px; border-radius:8px; font-weight:600; font-size:14.5px}
+.danger:hover{filter:brightness(1.08)}
+
 .note{font-size:13px; color:var(--muted); margin-top:20px; padding:12px 15px;
   background:var(--surface-2); border-radius:8px; border:1px solid var(--line)}
 
@@ -273,8 +300,12 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
       <b>تحضير مباراة الأمن الوطني</b>
       <span>371 سؤالا مُتحقَّقا · دورات 2016 / 2017 / 2019 · 14 ملخصا محيَّنا</span>
     </div>
-    <button class="ghost" id="themeBtn" type="button">تبديل السِّمة</button>
-    <button class="ghost" id="resetBtn" type="button">تصفير التقدم</button>
+    <div class="langwrap" role="group" id="langWrap">
+      <button type="button" data-lang="ar" aria-pressed="true">العربية</button>
+      <button type="button" data-lang="fr" aria-pressed="false">Français</button>
+    </div>
+    <button class="ghost" id="themeBtn" type="button"></button>
+    <button class="ghost" id="resetBtn" type="button"></button>
   </div>
   <nav class="tabs" role="tablist" aria-label="أقسام التطبيق">
     <button class="tab" role="tab" data-p="home" aria-selected="true">لوحة التقدم</button>
@@ -293,6 +324,18 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
   <section class="panel" id="p-sheets" hidden></section>
 </main>
 
+<div class="scrim" id="scrim" hidden>
+  <div class="dialog" role="alertdialog" aria-modal="true" aria-labelledby="dlgTitle" aria-describedby="dlgBody">
+    <h2 id="dlgTitle"></h2>
+    <p id="dlgBody"></p>
+    <p class="warnline" id="dlgWarn"></p>
+    <div class="dialog-foot">
+      <button class="secondary" id="dlgCancel" type="button"></button>
+      <button class="danger" id="dlgOk" type="button"></button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
 <script src="data.js"></script>
 <script>
@@ -301,6 +344,108 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
 var BANK = window.BANK || [], SHEETS = window.SHEETS || [];
 var KEYS = ["أ","ب","ج","د","هـ"];
 var LS = "dgsn-prep-v1";
+
+/* ---------- i18n ---------- */
+var I18N = {
+ ar:{
+  dir:"rtl", htmlLang:"ar",
+  brand:"تحضير مباراة الأمن الوطني",
+  tagline:"371 سؤالا مُتحقَّقا · دورات 2016 / 2017 / 2019 · 14 ملخصا محيَّنا",
+  theme:"تبديل السِّمة", reset:"تصفير التقدم",
+  tabs:["لوحة التقدم","تدريب","محاكاة الامتحان","مراجعة الأخطاء","الملخصات"],
+  eyebrowHome:"المديرية العامة للأمن الوطني", homeTitle:"لوحة التقدم",
+  homeLede:"أسئلة الدورات الثلاث بأجوبة مُعلَّلة تحيل على الفصول والمواد، وملخصات النصوص القانونية المنظمة للمباراة — في مكان واحد. تقدمك محفوظ على هذا المتصفح وحده.",
+  stAttempted:"أسئلة مُجابة", stAccuracy:"معدل الإصابة", stMastered:"مُتقَنة", stWeak:"تحتاج مراجعة",
+  cDrillT:"ابدأ تدريبا", cDrillD:"اختر محورا واحدا أو أكثر، مع التصحيح والتعليل بعد كل سؤال.",
+  cExamT:"محاكاة الامتحان", cExamD:"50 سؤالا في 60 دقيقة — نفس شروط الاختبار الكتابي الحقيقي.",
+  cWeakT:"مراجعة الأخطاء", cWeakD0:"لا أخطاء مسجلة بعد", cWeakDn:" سؤالا أخطأت فيها",
+  cWeakTail:" — الأولوية لما نسيته.",
+  cSheetsT:"الملخصات", cSheetsD:"14 ملخصا: الدستور، المسطرة الجنائية، المعجم القانوني، خطة 8 أسابيع…",
+  masteryH:"الإتقان حسب المحور", masteryP:"مرتَّبة من الأضعف إلى الأقوى. المحاور غير المطروقة في الأسفل.",
+  qShort:" س",
+  noteA:"<b>عن الأجوبة:</b> أوراق الدورات تُنشر بدون شبكة تصحيح رسمية، فحُرِّرت الأجوبة والتعليلات هنا انطلاقا من النصوص القانونية الجاري بها العمل ومن مصادر رسمية مُحيَّنة. <b>راجَعنا كل سؤال مشكوك فيه وصحّحناه</b>: ",
+  noteB:" سؤالا عُدِّلت إجابته أو خياراته وتحمل علامة ✏️ مع بيان سبب التصحيح، وحُذفت الأسئلة التي تعذّر التحقق منها.",
+  drillEye:"وضع التدريب", drillTitle:"اختر محاور المراجعة",
+  drillLede:"التصحيح والتعليل يظهران فور اختيارك. اترك الاختيار فارغا لتشمل كل المحاور.",
+  drillStart:"ابدأ التدريب", drillClear:"مسح الاختيار", drillCount:" سؤالا في هذه الجولة",
+  examEye:"محاكاة الاختبار الكتابي", examTitle:"50 سؤالا · 60 دقيقة",
+  examLede:"نفس بنية اختبار حراس الأمن ومفتشي الشرطة: أسئلة ذات خيارات متعددة، ساعة واحدة، ولا تصحيح إلا في النهاية. اختر إجابتك ثم انتقل — يمكنك ترك سؤال دون جواب.",
+  examStart:"ابدأ المحاكاة", examHint:"⏱ المؤقت ينطلق فور الضغط.",
+  examNote:"<b>تذكير:</b> ورقة الإجابة تُصحَّح <b>آليا</b>. استعمل قلم حبر جاف أزرق أو أسود، لا تتجاوز إطار المربع، لا تثنِ الورقة، وتفادى أي تشطيب. اكتب أجوبتك أولا في مسودة ثم انقلها.",
+  weakEye:"التكرار المتباعد", weakTitle:"مراجعة الأخطاء",
+  weakEmpty:"لا توجد أخطاء مسجّلة بعد. ابدأ بتدريب أو بمحاكاة امتحان، وستتجمّع هنا كل الأسئلة التي أخطأت فيها — مرتَّبة بحيث يعود إليك الأصعب أولا.",
+  weakGo:"اذهب إلى التدريب", weakN1:" سؤالا تنتظر المراجعة. السؤال يخرج من القائمة بعد أن تصيبه <b>ثلاث مرات متتالية</b>.",
+  weakStart:"ابدأ المراجعة",
+  fixedBadge:"✏️ مُصحَّح بعد التحقق", adLabel:"إعلان",
+  correctOfA:" صحيحة من ", examNoFeedback:"لا تصحيح قبل النهاية — كما في المباراة.",
+  chooseHint:"اختر إجابة لعرض التصحيح والتعليل.",
+  next:"التالي", nextQ:"السؤال التالي", skip:"تخطّي", finish:"إنهاء وعرض النتيجة",
+  vGood:"✔ إجابة صحيحة", vBad:"✘ الجواب الصحيح: ",
+  resExam:"نتيجة المحاكاة", resRound:"انتهت الجولة", resFrom:" إجابة صحيحة من ",
+  m85:"مستوى جاهز للمباراة. حافظ على الإيقاع وركّز على المحاور الحمراء في لوحة التقدم.",
+  m70:"مستوى جيد. الفارق الآن في التفاصيل: الأرقام والآجال وأسماء الفصول.",
+  m50:"قاعدة موجودة لكنها غير مستقرة. راجع الملخصات القانونية قبل جولة جديدة.",
+  mLow:"ابدأ بالملخصات قبل الأسئلة — خاصة الدستور والمسطرة الجنائية، وهما أكثر ما يتكرر.",
+  again:"جولة جديدة", goWeak:"راجع الأخطاء", goHome:"لوحة التقدم",
+  wrongH:"الأسئلة التي أخطأت فيها",
+  sheetsNav:"الملخصات",
+  dlgTitle:"تصفير التقدم؟", dlgBody:"سيُمسح كل ما سجّلته على هذا المتصفح: الأسئلة المُجابة، ومعدل الإصابة، وقائمة مراجعة الأخطاء.",
+  dlgWarn:"لا يمكن التراجع عن هذه العملية.", dlgCancel:"إلغاء", dlgOk:"نعم، امسح كل شيء",
+  examLeave:"محاكاة الامتحان جارية. مغادرة هذا القسم ستُنهيها. هل تريد المتابعة؟",
+  arOnly:""
+ },
+ fr:{
+  dir:"ltr", htmlLang:"fr",
+  brand:"Préparation au concours de la Sûreté nationale",
+  tagline:"371 questions vérifiées · sessions 2016 / 2017 / 2019 · 14 fiches à jour",
+  theme:"Changer de thème", reset:"Réinitialiser",
+  tabs:["Tableau de bord","Entraînement","Simulation","Révision des erreurs","Fiches"],
+  eyebrowHome:"Direction générale de la Sûreté nationale", homeTitle:"Tableau de bord",
+  homeLede:"Les questions des trois sessions, chacune avec une explication renvoyant à l'article applicable, et les fiches des textes qui régissent le concours — au même endroit. Votre progression reste sur ce navigateur.",
+  stAttempted:"Questions traitées", stAccuracy:"Taux de réussite", stMastered:"Maîtrisées", stWeak:"À revoir",
+  cDrillT:"Commencer un entraînement", cDrillD:"Choisissez un ou plusieurs axes ; correction et explication après chaque question.",
+  cExamT:"Simulation d'examen", cExamD:"50 questions en 60 minutes — les conditions réelles de l'épreuve écrite.",
+  cWeakT:"Révision des erreurs", cWeakD0:"Aucune erreur enregistrée", cWeakDn:" questions manquées",
+  cWeakTail:" — priorité à ce que vous avez oublié.",
+  cSheetsT:"Fiches", cSheetsD:"14 fiches : Constitution, procédure pénale, lexique juridique, plan sur 8 semaines…",
+  masteryH:"Maîtrise par axe", masteryP:"Du plus faible au plus solide. Les axes non abordés figurent en bas.",
+  qShort:" q.",
+  noteA:"<b>À propos des réponses :</b> les sujets des sessions circulent sans corrigé officiel. Les réponses et explications ont été établies à partir des textes juridiques en vigueur et de sources officielles à jour. <b>Chaque question douteuse a été vérifiée et corrigée</b> : ",
+  noteB:" questions ont vu leur réponse ou leurs propositions rectifiées — elles portent la marque ✏️ avec le motif de la correction. Les questions invérifiables ont été retirées.",
+  drillEye:"Mode entraînement", drillTitle:"Choisissez vos axes de révision",
+  drillLede:"La correction et l'explication s'affichent dès votre choix. Laissez la sélection vide pour couvrir tous les axes.",
+  drillStart:"Commencer", drillClear:"Effacer la sélection", drillCount:" questions dans cette série",
+  examEye:"Simulation de l'épreuve écrite", examTitle:"50 questions · 60 minutes",
+  examLede:"La structure réelle de l'épreuve des gardiens de la paix et des inspecteurs : questions à choix multiples, une heure, aucune correction avant la fin. Choisissez votre réponse puis avancez — vous pouvez laisser une question sans réponse.",
+  examStart:"Lancer la simulation", examHint:"⏱ Le chronomètre démarre immédiatement.",
+  examNote:"<b>Rappel :</b> la grille est corrigée <b>automatiquement</b>. Stylo à bille bleu ou noir, ne dépassez pas le cadre de la case, ne pliez pas la feuille, aucune rature. Travaillez d'abord au brouillon, puis reportez.",
+  weakEye:"Répétition espacée", weakTitle:"Révision des erreurs",
+  weakEmpty:"Aucune erreur enregistrée pour l'instant. Faites un entraînement ou une simulation : toutes vos questions manquées se rassembleront ici, les plus difficiles revenant en premier.",
+  weakGo:"Aller à l'entraînement", weakN1:" questions attendent d'être revues. Une question quitte la liste après <b>trois bonnes réponses consécutives</b>.",
+  weakStart:"Commencer la révision",
+  fixedBadge:"✏️ Corrigée après vérification", adLabel:"Publicité",
+  correctOfA:" correctes sur ", examNoFeedback:"Aucune correction avant la fin — comme au concours.",
+  chooseHint:"Choisissez une réponse pour voir la correction et l'explication.",
+  next:"Suivante", nextQ:"Question suivante", skip:"Passer", finish:"Terminer et voir le résultat",
+  vGood:"✔ Bonne réponse", vBad:"✘ Réponse correcte : ",
+  resExam:"Résultat de la simulation", resRound:"Série terminée", resFrom:" bonnes réponses sur ",
+  m85:"Niveau prêt pour le concours. Gardez le rythme et concentrez-vous sur les axes en rouge du tableau de bord.",
+  m70:"Bon niveau. L'écart se joue désormais sur les détails : chiffres, délais et numéros d'articles.",
+  m50:"Les bases sont là mais instables. Reprenez les fiches juridiques avant une nouvelle série.",
+  mLow:"Commencez par les fiches avant les questions — en particulier la Constitution et la procédure pénale, les plus récurrentes.",
+  again:"Nouvelle série", goWeak:"Revoir les erreurs", goHome:"Tableau de bord",
+  wrongH:"Questions manquées",
+  sheetsNav:"Fiches",
+  dlgTitle:"Réinitialiser la progression ?", dlgBody:"Tout ce qui est enregistré sur ce navigateur sera effacé : questions traitées, taux de réussite et liste de révision des erreurs.",
+  dlgWarn:"Cette action est irréversible.", dlgCancel:"Annuler", dlgOk:"Oui, tout effacer",
+  examLeave:"Une simulation est en cours. Quitter cette section y mettra fin. Continuer ?",
+  arOnly:"Cette fiche reproduit des textes juridiques marocains officiels, dont la version qui fait foi est en arabe. Elle est donc présentée dans sa langue d'origine."
+ }
+};
+var lang = "ar";   // corrected after `store` is loaded below
+function t(k){ return I18N[lang][k]; }
+function isFr(){ return lang === "fr"; }
+
 
 /* ---------- AdSense ----------
    ضع معرّف الناشر ورقمي الوحدتين هنا بعد قبول الموقع في AdSense.
@@ -323,7 +468,7 @@ function initAds(){
 function adUnit(slot){
   if(!ADS.client || !slot) return "";
   return '<aside class="adbox" aria-label="محتوى إعلاني">' +
-         '<span class="adlabel">إعلان</span>' +
+         '<span class="adlabel">' + t("adLabel") + '</span>' +
          '<ins class="adsbygoogle" style="display:block" data-ad-client="' + ADS.client +
          '" data-ad-slot="' + slot + '" data-ad-format="auto" data-full-width-responsive="true"></ins></aside>';
 }
@@ -342,8 +487,69 @@ function pushAds(el){
 var store = {seen:{}, theme:null};
 try{ var raw = localStorage.getItem(LS); if(raw) store = JSON.parse(raw); }catch(e){}
 if(!store.seen) store.seen = {};
+if(store.lang === "fr") lang = "fr";
 function save(){ try{ localStorage.setItem(LS, JSON.stringify(store)); }catch(e){} }
 function rec(id){ return store.seen[id] || (store.seen[id] = {n:0, ok:0, box:0}); }
+
+/* ---------- language ---------- */
+function applyLang(){
+  var d = I18N[lang];
+  root.setAttribute("lang", d.htmlLang);
+  root.setAttribute("dir", d.dir);
+  document.querySelector(".brand b").textContent = d.brand;
+  document.querySelector(".brand span").textContent = d.tagline;
+  document.getElementById("themeBtn").textContent = d.theme;
+  document.getElementById("resetBtn").textContent = d.reset;
+  Array.prototype.forEach.call(document.querySelectorAll(".tab"), function(b, i){
+    b.textContent = d.tabs[i];
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("#langWrap button"), function(b){
+    b.setAttribute("aria-pressed", String(b.dataset.lang === lang));
+  });
+  document.title = d.brand;
+}
+Array.prototype.forEach.call(document.querySelectorAll("#langWrap button"), function(b){
+  b.addEventListener("click", function(){
+    if(b.dataset.lang === lang) return;
+    lang = b.dataset.lang; store.lang = lang; save();
+    sheetIdx = 0;
+    applyLang(); render();
+  });
+});
+
+/* ---------- confirm dialog ---------- */
+var scrim = document.getElementById("scrim"), dlgOnOk = null, dlgLastFocus = null;
+function askConfirm(onOk){
+  var d = I18N[lang];
+  document.getElementById("dlgTitle").textContent = d.dlgTitle;
+  document.getElementById("dlgBody").textContent = d.dlgBody;
+  document.getElementById("dlgWarn").textContent = d.dlgWarn;
+  document.getElementById("dlgCancel").textContent = d.dlgCancel;
+  document.getElementById("dlgOk").textContent = d.dlgOk;
+  dlgOnOk = onOk;
+  dlgLastFocus = document.activeElement;
+  scrim.hidden = false;
+  document.getElementById("dlgCancel").focus();
+}
+function closeConfirm(){
+  scrim.hidden = true; dlgOnOk = null;
+  if(dlgLastFocus && dlgLastFocus.focus) dlgLastFocus.focus();
+}
+document.getElementById("dlgCancel").addEventListener("click", closeConfirm);
+document.getElementById("dlgOk").addEventListener("click", function(){
+  var fn = dlgOnOk; closeConfirm(); if(fn) fn();
+});
+scrim.addEventListener("click", function(e){ if(e.target === scrim) closeConfirm(); });
+document.addEventListener("keydown", function(e){
+  if(scrim.hidden) return;
+  if(e.key === "Escape"){ closeConfirm(); e.preventDefault(); }
+  if(e.key === "Tab"){
+    var f = [document.getElementById("dlgCancel"), document.getElementById("dlgOk")];
+    var i = f.indexOf(document.activeElement);
+    f[(i + (e.shiftKey ? f.length - 1 : 1)) % f.length].focus();
+    e.preventDefault();
+  }
+});
 
 /* ---------- theme ---------- */
 var root = document.documentElement;
@@ -355,8 +561,7 @@ document.getElementById("themeBtn").addEventListener("click", function(){
   root.setAttribute("data-theme", next); store.theme = next; save();
 });
 document.getElementById("resetBtn").addEventListener("click", function(){
-  if(!confirm("سيُمسح كل تقدمك المحفوظ على هذا المتصفح. هل تريد المتابعة؟")) return;
-  store.seen = {}; save(); render();
+  askConfirm(function(){ store.seen = {}; save(); render(); });
 });
 
 /* ---------- helpers ---------- */
@@ -378,13 +583,14 @@ function fillClass(p){ return p==null ? "" : (p<50 ? "lo" : (p<75 ? "mid" : "hi"
 /* ---------- tabs ---------- */
 var panels = {}; ["home","drill","exam","weak","sheets"].forEach(function(k){ panels[k] = document.getElementById("p-"+k); });
 var current = "home";
-Array.prototype.forEach.call(document.querySelectorAll(".tab"), function(t){
-  t.addEventListener("click", function(){
-    if(session && session.mode === "exam" && session.active && t.dataset.p !== "exam"){
-      if(!confirm("محاكاة الامتحان جارية. مغادرة هذا القسم ستُنهيها. هل تريد المتابعة؟")) return;
-      endExam(true);
+Array.prototype.forEach.call(document.querySelectorAll(".tab"), function(tb){
+  tb.addEventListener("click", function(){
+    var target = tb.dataset.p;
+    if(session && session.mode === "exam" && session.active && target !== "exam"){
+      askLeaveExam(function(){ endExam(true); go(target); });
+      return;
     }
-    go(t.dataset.p);
+    go(target);
   });
 });
 function go(p){
@@ -481,38 +687,38 @@ function renderHome(){
   var corrected = BANK.filter(function(q){ return q.fixed; }).length;
 
   var h = '';
-  h += '<p class="eyebrow">المديرية العامة للأمن الوطني</p>';
-  h += '<h1 style="font-size:27px">لوحة التقدم</h1>';
-  h += '<p class="lede">أسئلة الدورات الثلاث بأجوبة مُعلَّلة تحيل على الفصول والمواد، وملخصات النصوص القانونية المنظمة للمباراة — في مكان واحد. تقدمك محفوظ على هذا المتصفح وحده.</p>';
+  h += '<p class="eyebrow">'+t("eyebrowHome")+'</p>';
+  h += '<h1 style="font-size:27px">'+t("homeTitle")+'</h1>';
+  h += '<p class="lede">'+t("homeLede")+'</p>';
 
   h += '<dl class="stat-row">';
-  h += '<div class="stat"><dt>أسئلة مُجابة</dt><dd class="num">'+attempted+' <small>/ '+total+'</small></dd></div>';
-  h += '<div class="stat"><dt>معدل الإصابة</dt><dd class="num">'+(m.pct===null?'—':m.pct+'%')+'</dd></div>';
-  h += '<div class="stat"><dt>مُتقَنة</dt><dd class="num">'+mastered+'</dd></div>';
-  h += '<div class="stat"><dt>تحتاج مراجعة</dt><dd class="num">'+weak+'</dd></div>';
+  h += '<div class="stat"><dt>'+t("stAttempted")+'</dt><dd class="num">'+attempted+' <small>/ '+total+'</small></dd></div>';
+  h += '<div class="stat"><dt>'+t("stAccuracy")+'</dt><dd class="num">'+(m.pct===null?'—':m.pct+'%')+'</dd></div>';
+  h += '<div class="stat"><dt>'+t("stMastered")+'</dt><dd class="num">'+mastered+'</dd></div>';
+  h += '<div class="stat"><dt>'+t("stWeak")+'</dt><dd class="num">'+weak+'</dd></div>';
   h += '</dl>';
 
   h += '<div class="launch">';
-  h += '<button class="card-btn" data-go="drill"><b>ابدأ تدريبا</b><span>اختر محورا واحدا أو أكثر، مع التصحيح والتعليل بعد كل سؤال.</span></button>';
-  h += '<button class="card-btn" data-go="exam"><b>محاكاة الامتحان</b><span>50 سؤالا في 60 دقيقة — نفس شروط الاختبار الكتابي الحقيقي.</span></button>';
-  h += '<button class="card-btn" data-go="weak"><b>مراجعة الأخطاء</b><span>'+(weak? weak+' سؤالا أخطأت فيها' : 'لا أخطاء مسجلة بعد')+' — الأولوية لما نسيته.</span></button>';
-  h += '<button class="card-btn" data-go="sheets"><b>الملخصات</b><span>14 ملخصا: الدستور، المسطرة الجنائية، المعجم القانوني، خطة 8 أسابيع…</span></button>';
+  h += '<button class="card-btn" data-go="drill"><b>'+t("cDrillT")+'</b><span>'+t("cDrillD")+'</span></button>';
+  h += '<button class="card-btn" data-go="exam"><b>'+t("cExamT")+'</b><span>'+t("cExamD")+'</span></button>';
+  h += '<button class="card-btn" data-go="weak"><b>'+t("cWeakT")+'</b><span>'+(weak ? weak+t("cWeakDn") : t("cWeakD0"))+t("cWeakTail")+'</span></button>';
+  h += '<button class="card-btn" data-go="sheets"><b>'+t("cSheetsT")+'</b><span>'+t("cSheetsD")+'</span></button>';
   h += '</div>';
 
-  h += '<div class="sec"><h2>الإتقان حسب المحور</h2>';
-  h += '<p>مرتَّبة من الأضعف إلى الأقوى. المحاور غير المطروقة في الأسفل.</p>';
+  h += '<div class="sec"><h2>'+t("masteryH")+'</h2>';
+  h += '<p>'+t("masteryP")+'</p>';
   h += '<div class="meter-list">';
   rows.forEach(function(r){
     var pct = r.pct === null ? 0 : r.pct;
     h += '<div class="meter">';
-    h += '<span class="meter-name" title="'+esc(r.name)+'">'+esc(r.name)+'</span>';
+    h += '<span class="meter-name'+(isFr()?' rtl-content':'')+'" title="'+esc(r.name)+'">'+esc(r.name)+'</span>';
     h += '<span class="track"><i class="fill '+fillClass(r.pct)+'" style="width:'+pct+'%"></i></span>';
-    h += '<span class="meter-val num">'+(r.pct===null ? r.n+' س' : r.pct+'%')+'</span>';
+    h += '<span class="meter-val num">'+(r.pct===null ? r.n+t("qShort") : r.pct+'%')+'</span>';
     h += '</div>';
   });
   h += '</div></div>';
 
-  h += '<p class="note"><b>عن الأجوبة:</b> أوراق الدورات تُنشر بدون شبكة تصحيح رسمية، فحُرِّرت الأجوبة والتعليلات هنا انطلاقا من النصوص القانونية الجاري بها العمل ومن مصادر رسمية مُحيَّنة. <b>راجَعنا كل سؤال مشكوك فيه وصحّحناه</b>: '+corrected+' سؤالا عُدِّلت إجابته أو خياراته وتحمل علامة ✏️ مع بيان سبب التصحيح، وحُذفت الأسئلة التي تعذّر التحقق منها.</p>';
+  h += '<p class="note">'+t("noteA")+corrected+t("noteB")+'</p>';
 
   h += adUnit(ADS.slotDashboard);
 
@@ -542,32 +748,32 @@ function setupHTML(mode){
   if(mode === "drill"){
     var cm = cats();
     var names = Object.keys(cm).sort(function(a,b){ return cm[b].length - cm[a].length; });
-    h += '<p class="eyebrow">وضع التدريب</p><h1 style="font-size:24px">اختر محاور المراجعة</h1>';
-    h += '<p class="lede">التصحيح والتعليل يظهران فور اختيارك. اترك الاختيار فارغا لتشمل كل المحاور.</p>';
+    h += '<p class="eyebrow">'+t("drillEye")+'</p><h1 style="font-size:24px">'+t("drillTitle")+'</h1>';
+    h += '<p class="lede">'+t("drillLede")+'</p>';
     h += '<div class="picker">';
     names.forEach(function(c){
       var on = drillSel.indexOf(c) > -1;
-      h += '<button class="pill" data-cat="'+esc(c)+'" aria-pressed="'+on+'">'+esc(c)+'<span class="n num">'+cm[c].length+'</span></button>';
+      h += '<button class="pill'+(isFr()?' rtl-content':'')+'" data-cat="'+esc(c)+'" aria-pressed="'+on+'">'+esc(c)+'<span class="n num">'+cm[c].length+'</span></button>';
     });
     h += '</div>';
-    h += '<div class="qfoot"><button class="primary" data-start="drill">ابدأ التدريب</button>';
-    h += '<button class="secondary" data-clear>مسح الاختيار</button>';
+    h += '<div class="qfoot"><button class="primary" data-start="drill">'+t("drillStart")+'</button>';
+    h += '<button class="secondary" data-clear>'+t("drillClear")+'</button>';
     h += '<span class="hint" id="selCount"></span></div>';
   } else if(mode === "exam"){
-    h += '<p class="eyebrow">محاكاة الاختبار الكتابي</p><h1 style="font-size:24px">50 سؤالا · 60 دقيقة</h1>';
-    h += '<p class="lede">نفس بنية اختبار حراس الأمن ومفتشي الشرطة: أسئلة ذات خيارات متعددة، ساعة واحدة، ولا تصحيح إلا في النهاية. اختر إجابتك ثم انتقل — يمكنك ترك سؤال دون جواب.</p>';
-    h += '<div class="qfoot" style="margin-top:22px"><button class="primary" data-start="exam">ابدأ المحاكاة</button>';
-    h += '<span class="hint">⏱ المؤقت ينطلق فور الضغط.</span></div>';
-    h += '<p class="note"><b>تذكير من الدليل:</b> ورقة الإجابة تُصحَّح <b>آليا</b>. استعمل قلم حبر جاف أزرق أو أسود، لا تتجاوز إطار المربع، لا تثنِ الورقة، وتفادى أي تشطيب. اكتب أجوبتك أولا في مسودة ثم انقلها.</p>';
+    h += '<p class="eyebrow">'+t("examEye")+'</p><h1 style="font-size:24px">'+t("examTitle")+'</h1>';
+    h += '<p class="lede">'+t("examLede")+'</p>';
+    h += '<div class="qfoot" style="margin-top:22px"><button class="primary" data-start="exam">'+t("examStart")+'</button>';
+    h += '<span class="hint">'+t("examHint")+'</span></div>';
+    h += '<p class="note">'+t("examNote")+'</p>';
   } else {
     var pool = weakPool();
-    h += '<p class="eyebrow">التكرار المتباعد</p><h1 style="font-size:24px">مراجعة الأخطاء</h1>';
+    h += '<p class="eyebrow">'+t("weakEye")+'</p><h1 style="font-size:24px">'+t("weakTitle")+'</h1>';
     if(!pool.length){
-      h += '<p class="lede">لا توجد أخطاء مسجّلة بعد. ابدأ بتدريب أو بمحاكاة امتحان، وستتجمّع هنا كل الأسئلة التي أخطأت فيها — مرتَّبة بحيث يعود إليك الأصعب أولا.</p>';
-      h += '<div class="qfoot" style="margin-top:22px"><button class="primary" data-goto="drill">اذهب إلى التدريب</button></div>';
+      h += '<p class="lede">'+t("weakEmpty")+'</p>';
+      h += '<div class="qfoot" style="margin-top:22px"><button class="primary" data-goto="drill">'+t("weakGo")+'</button></div>';
     } else {
-      h += '<p class="lede">'+pool.length+' سؤالا تنتظر المراجعة. السؤال يخرج من القائمة بعد أن تصيبه <b>ثلاث مرات متتالية</b>.</p>';
-      h += '<div class="qfoot" style="margin-top:22px"><button class="primary" data-start="weak">ابدأ المراجعة</button></div>';
+      h += '<p class="lede">'+pool.length+t("weakN1")+'</p>';
+      h += '<div class="qfoot" style="margin-top:22px"><button class="primary" data-start="weak">'+t("weakStart")+'</button></div>';
     }
   }
   return h;
@@ -613,7 +819,7 @@ function wireSetup(el, mode){
 function updCount(el){
   var s = el.querySelector("#selCount"); if(!s) return;
   var n = drillSel.length ? BANK.filter(function(q){ return drillSel.indexOf(q.cat) > -1; }).length : BANK.length;
-  s.textContent = n + " سؤالا في هذه الجولة";
+  s.textContent = n + t("drillCount");
 }
 
 function quizHTML(){
@@ -627,13 +833,13 @@ function quizHTML(){
     h += '<span class="timer num" id="timer">'+fmt(session.endsAt - Date.now())+'</span>';
   } else {
     var done = session.log.length;
-    h += '<span class="score-live num">'+session.correct+' صحيحة من '+done+'</span>';
+    h += '<span class="score-live num">'+session.correct+t("correctOfA")+done+'</span>';
   }
   h += '</div>';
 
-  h += '<article class="qcard">';
+  h += '<article class="qcard'+(isFr()?' rtl-content':'')+'">';
   h += '<div class="qmeta"><span class="chip src">'+esc(q.src)+'</span><span class="chip">'+esc(q.cat)+'</span>';
-  if(q.fixed) h += '<span class="chip warn">✏️ مُصحَّح بعد التحقق</span>';
+  if(q.fixed) h += '<span class="chip warn">'+t("fixedBadge")+'</span>';
   h += '</div>';
   h += '<h2 class="qtext">'+esc(q.q)+'</h2>';
   h += '<ul class="opts">';
@@ -652,20 +858,20 @@ function quizHTML(){
   if(session.answered && session.mode !== "exam"){
     var good = session.picked === q.a;
     h += '<div class="why '+(good?"good":"bad")+'">';
-    h += '<span class="verdict">'+(good ? "✔ إجابة صحيحة" : "✘ الجواب الصحيح: "+KEYS[q.a]+" — "+esc(q.opts[q.a]))+'</span>';
+    h += '<span class="verdict">'+(good ? t("vGood") : t("vBad")+KEYS[q.a]+" — "+esc(q.opts[q.a]))+'</span>';
     h += mdInline(q.why);
     h += '</div>';
   }
 
   h += '<div class="qfoot">';
   if(session.mode === "exam"){
-    h += '<button class="primary" data-next>'+(session.i+1 >= n ? "إنهاء وعرض النتيجة" : "السؤال التالي")+'</button>';
-    h += '<button class="secondary" data-next>تخطّي</button>';
-    h += '<span class="hint">لا تصحيح قبل النهاية — كما في المباراة.</span>';
+    h += '<button class="primary" data-next>'+(session.i+1 >= n ? t("finish") : t("nextQ"))+'</button>';
+    h += '<button class="secondary" data-next>'+t("skip")+'</button>';
+    h += '<span class="hint">'+t("examNoFeedback")+'</span>';
   } else if(session.answered){
-    h += '<button class="primary" data-next>'+(session.i+1 >= n ? "إنهاء وعرض النتيجة" : "التالي")+'</button>';
+    h += '<button class="primary" data-next>'+(session.i+1 >= n ? t("finish") : t("next"))+'</button>';
   } else {
-    h += '<span class="hint">اختر إجابة لعرض التصحيح والتعليل.</span>';
+    h += '<span class="hint">'+t("chooseHint")+'</span>';
   }
   h += '</div></article>';
   return h;
@@ -683,29 +889,29 @@ function resultHTML(){
   var pass = pct >= 50;
   var h = '';
   h += '<div class="result">';
-  h += '<p class="eyebrow">'+(session.mode === "exam" ? "نتيجة المحاكاة" : "انتهت الجولة")+'</p>';
+  h += '<p class="eyebrow">'+(session.mode === "exam" ? t("resExam") : t("resRound"))+'</p>';
   h += '<div class="big-score num '+(pass?"pass":"fail")+'">'+pct+'%</div>';
-  h += '<p class="verdict-line num">'+session.correct+' إجابة صحيحة من '+n+'</p>';
+  h += '<p class="verdict-line num">'+session.correct+t("resFrom")+n+'</p>';
   var msg;
-  if(pct >= 85) msg = "مستوى جاهز للمباراة. حافظ على الإيقاع وركّز على المحاور الحمراء في لوحة التقدم.";
-  else if(pct >= 70) msg = "مستوى جيد. الفارق الآن في التفاصيل: الأرقام والآجال وأسماء الفصول.";
-  else if(pct >= 50) msg = "قاعدة موجودة لكنها غير مستقرة. راجع الملخصات القانونية قبل جولة جديدة.";
-  else msg = "ابدأ بالملخصات قبل الأسئلة — خاصة الدستور والمسطرة الجنائية، وهما أكثر ما يتكرر.";
+  if(pct >= 85) msg = t("m85");
+  else if(pct >= 70) msg = t("m70");
+  else if(pct >= 50) msg = t("m50");
+  else msg = t("mLow");
   h += '<p class="verdict-line">'+msg+'</p>';
   h += '<div class="qfoot" style="justify-content:center">';
-  h += '<button class="primary" data-again>جولة جديدة</button>';
-  h += '<button class="secondary" data-goto="weak">راجع الأخطاء</button>';
-  h += '<button class="secondary" data-goto="home">لوحة التقدم</button>';
+  h += '<button class="primary" data-again>'+t("again")+'</button>';
+  h += '<button class="secondary" data-goto="weak">'+t("goWeak")+'</button>';
+  h += '<button class="secondary" data-goto="home">'+t("goHome")+'</button>';
   h += '</div>';
 
   var wrong = session.log.filter(function(x){ return !x.ok; });
   if(wrong.length){
-    h += '<div class="breakdown"><h3 style="font-size:15px; margin-bottom:10px">الأسئلة التي أخطأت فيها ('+wrong.length+')</h3>';
+    h += '<div class="breakdown"><h3 style="font-size:15px; margin-bottom:10px">'+t("wrongH")+' ('+wrong.length+')</h3>';
     h += '<div class="meter-list">';
     wrong.slice(0, 25).forEach(function(x){
       var q = BANK.filter(function(b){ return b.id === x.id; })[0];
       if(!q) return;
-      h += '<div class="meter" style="grid-template-columns:1fr auto">';
+      h += '<div class="meter'+(isFr()?' rtl-content':'')+'" style="grid-template-columns:1fr auto">';
       h += '<span class="meter-name" style="white-space:normal" title="'+esc(q.q)+'">'+esc(q.q)+'</span>';
       h += '<span class="chip">'+esc(q.cat)+'</span></div>';
     });
@@ -733,10 +939,31 @@ function wireQuiz(el){
 
 /* ----- sheets ----- */
 var sheetIdx = 0;
+function sheetList(){
+  if(!isFr()) return SHEETS;
+  // French first, then the Arabic-only legal sheets
+  return SHEETS.slice().sort(function(a,b){
+    return (b.md_fr ? 1 : 0) - (a.md_fr ? 1 : 0);
+  });
+}
+function askLeaveExam(onOk){
+  var d = I18N[lang];
+  document.getElementById("dlgTitle").textContent = d.tabs[2];
+  document.getElementById("dlgBody").textContent = d.examLeave;
+  document.getElementById("dlgWarn").textContent = "";
+  document.getElementById("dlgCancel").textContent = d.dlgCancel;
+  document.getElementById("dlgOk").textContent = d.dlgOk;
+  dlgOnOk = onOk;
+  dlgLastFocus = document.activeElement;
+  scrim.hidden = false;
+  document.getElementById("dlgCancel").focus();
+}
 function renderSheets(){
-  var h = '<div class="sheet-wrap"><nav class="sheet-nav" aria-label="الملخصات">';
-  SHEETS.forEach(function(s, i){
-    h += '<button data-s="'+i+'" aria-current="'+(i===sheetIdx)+'">'+esc(s.title)+'</button>';
+  var list = sheetList();
+  if(sheetIdx >= list.length) sheetIdx = 0;
+  var h = '<div class="sheet-wrap"><nav class="sheet-nav" aria-label="'+t("sheetsNav")+'">';
+  list.forEach(function(s, i){
+    h += '<button data-s="'+i+'"'+(isFr() && !s.md_fr ? ' class="rtl-content"' : '')+' aria-current="'+(i===sheetIdx)+'">'+esc(isFr() ? (s.title_fr || s.title) : s.title)+'</button>';
   });
   h += '</nav><article class="doc" id="docBody"></article></div>';
   panels.sheets.innerHTML = h;
@@ -744,10 +971,19 @@ function renderSheets(){
     b.addEventListener("click", function(){ sheetIdx = parseInt(b.dataset.s,10); renderSheets(); });
   });
   var body = document.getElementById("docBody");
-  var md = SHEETS[sheetIdx] ? SHEETS[sheetIdx].md : "";
+  var cur = list[sheetIdx] || {md:""};
+  var useFr = isFr() && cur.md_fr;
+  var md = useFr ? cur.md_fr : cur.md;
+  var pre = "";
+  if(isFr() && !cur.md_fr){
+    body.className = "doc rtl-content";
+    pre = '<p class="note" style="direction:ltr; text-align:left; margin:0 0 22px">'+t("arOnly")+'</p>';
+  } else {
+    body.className = "doc";
+  }
   if(window.marked){
     marked.setOptions({gfm:true, breaks:false, headerIds:false, mangle:false});
-    body.innerHTML = marked.parse(md);
+    body.innerHTML = pre + marked.parse(md);
   } else {
     body.textContent = md;
   }
@@ -772,6 +1008,7 @@ document.addEventListener("keydown", function(e){
   }
 });
 
+applyLang();
 render();
 })();
 </script>
