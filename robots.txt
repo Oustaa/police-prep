@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://oustaa.github.io/police-prep/sitemap.xml
+Sitemap: https://prepare-dgsn.ousta.dev/sitemap.xml
