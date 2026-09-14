@@ -3,9 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
-<meta name="description" content="بنك أسئلة وملخصات لتحضير مباريات الأمن الوطني بالمغرب.">
+<meta name="description" content="بنك أسئلة وملخصات لتحضير مباريات الأمن الوطني بالمغرب: 374 سؤالا من دورات 2016 و2017 و2019 مع التعليل، ومحاكاة للاختبار الكتابي، و14 ملخصا قانونيا ومنهجيا.">
 <meta name="color-scheme" content="light dark">
+<meta property="og:title" content="تحضير مباراة الأمن الوطني">
+<meta property="og:description" content="374 سؤالا بأجوبة معللة، محاكاة للامتحان، و14 ملخصا قانونيا ومنهجيا.">
+<meta property="og:type" content="website">
 <title>تحضير مباراة الأمن الوطني</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
@@ -247,6 +249,12 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
 .note{font-size:13px; color:var(--muted); margin-top:20px; padding:12px 15px;
   background:var(--surface-2); border-radius:8px; border:1px solid var(--line)}
 
+.adbox{display:block; margin-top:26px; padding:10px 12px 12px;
+  border:1px dashed var(--line-strong); border-radius:8px; background:var(--surface)}
+.adlabel{display:block; font-size:10.5px; font-weight:600; letter-spacing:.1em;
+  color:var(--muted); text-transform:uppercase; margin-bottom:8px}
+.adbox ins{min-height:90px}
+
 @media (max-width:780px){
   .sheet-wrap{grid-template-columns:1fr}
   .sheet-nav{position:static; flex-direction:row; flex-wrap:wrap; gap:6px; background:none; border:0; padding:0}
@@ -263,7 +271,7 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
     <div class="crest">🛡</div>
     <div class="brand">
       <b>تحضير مباراة الأمن الوطني</b>
-      <span>374 سؤالا · دورات 2016 / 2017 / 2019 · الملف التكويني كاملا</span>
+      <span>374 سؤالا · دورات 2016 / 2017 / 2019 · 14 ملخصا قانونيا ومنهجيا</span>
     </div>
     <button class="ghost" id="themeBtn" type="button">تبديل السِّمة</button>
     <button class="ghost" id="resetBtn" type="button">تصفير التقدم</button>
@@ -293,6 +301,42 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
 var BANK = window.BANK || [], SHEETS = window.SHEETS || [];
 var KEYS = ["أ","ب","ج","د","هـ"];
 var LS = "dgsn-prep-v1";
+
+/* ---------- AdSense ----------
+   ضع معرّف الناشر ورقمي الوحدتين هنا بعد قبول الموقع في AdSense.
+   ما دامت القيم فارغة، لا يُحمَّل أي سكريبت إعلاني ولا تظهر أي مساحة. */
+var ADS = {
+  client: "",          // مثال: "ca-pub-0000000000000000"
+  slotDashboard: "",   // رقم الوحدة الإعلانية أسفل لوحة التقدم
+  slotResult: ""       // رقم الوحدة الإعلانية في صفحة النتيجة
+};
+var adsReady = false;
+function initAds(){
+  if(!ADS.client || adsReady) return;
+  adsReady = true;
+  var s = document.createElement("script");
+  s.async = true;
+  s.crossOrigin = "anonymous";
+  s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + encodeURIComponent(ADS.client);
+  document.head.appendChild(s);
+}
+function adUnit(slot){
+  if(!ADS.client || !slot) return "";
+  return '<aside class="adbox" aria-label="محتوى إعلاني">' +
+         '<span class="adlabel">إعلان</span>' +
+         '<ins class="adsbygoogle" style="display:block" data-ad-client="' + ADS.client +
+         '" data-ad-slot="' + slot + '" data-ad-format="auto" data-full-width-responsive="true"></ins></aside>';
+}
+function pushAds(el){
+  if(!ADS.client) return;
+  initAds();
+  var units = el.querySelectorAll("ins.adsbygoogle");
+  for(var i = 0; i < units.length; i++){
+    if(units[i].getAttribute("data-filled")) continue;
+    units[i].setAttribute("data-filled", "1");
+    try{ (window.adsbygoogle = window.adsbygoogle || []).push({}); }catch(e){}
+  }
+}
 
 /* ---------- storage ---------- */
 var store = {seen:{}, theme:null};
@@ -439,7 +483,7 @@ function renderHome(){
   var h = '';
   h += '<p class="eyebrow">المديرية العامة للأمن الوطني</p>';
   h += '<h1 style="font-size:27px">لوحة التقدم</h1>';
-  h += '<p class="lede">كل ما في دليل التحضير — أسئلة الدورات الثلاث بأجوبة مُعلَّلة، والملف التكويني كاملا — في مكان واحد. تقدمك محفوظ على هذا المتصفح.</p>';
+  h += '<p class="lede">أسئلة الدورات الثلاث بأجوبة مُعلَّلة تحيل على الفصول والمواد، وملخصات النصوص القانونية المنظمة للمباراة — في مكان واحد. تقدمك محفوظ على هذا المتصفح وحده.</p>';
 
   h += '<dl class="stat-row">';
   h += '<div class="stat"><dt>أسئلة مُجابة</dt><dd class="num">'+attempted+' <small>/ '+total+'</small></dd></div>';
@@ -468,12 +512,15 @@ function renderHome(){
   });
   h += '</div></div>';
 
-  h += '<p class="note"><b>ملاحظة عن المصدر:</b> الكتاب يورد أسئلة الدورات <b>بدون شبكة تصحيح</b>. الأجوبة والتعليلات هنا مُستنتجة من النصوص القانونية ومن المعطيات المرجعية. '+flagged+' سؤالا مُعلَّمة بـ ⚠️ لأن صياغتها في الكتاب ملتبسة أو معطياتها مرتبطة بتاريخها — تحقّق منها من مصدر رسمي قبل اعتمادها.</p>';
+  h += '<p class="note"><b>ملاحظة عن الأجوبة:</b> أوراق الدورات السابقة تُنشر <b>بدون شبكة تصحيح رسمية</b>. الأجوبة والتعليلات هنا مُستنتجة من النصوص القانونية الجاري بها العمل، وليست أجوبة رسمية. '+flagged+' سؤالا مُعلَّمة بـ ⚠️ لأن صياغتها ملتبسة أو خياراتها ناقصة أو معطياتها مرتبطة بتاريخها — تحقّق منها من مصدر رسمي قبل اعتمادها.</p>';
+
+  h += adUnit(ADS.slotDashboard);
 
   panels.home.innerHTML = h;
   Array.prototype.forEach.call(panels.home.querySelectorAll("[data-go]"), function(b){
     b.addEventListener("click", function(){ go(b.dataset.go); });
   });
+  pushAds(panels.home);
 }
 
 /* ----- quiz panels ----- */
@@ -665,10 +712,12 @@ function resultHTML(){
     h += '</div></div>';
   }
   h += '</div>';
+  h += adUnit(ADS.slotResult);
   return h;
 }
 
 function wireQuiz(el){
+  pushAds(el);
   Array.prototype.forEach.call(el.querySelectorAll(".opt"), function(b){
     b.addEventListener("click", function(){ answer(parseInt(b.dataset.i,10)); });
   });

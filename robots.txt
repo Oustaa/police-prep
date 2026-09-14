@@ -1,2 +1,4 @@
 User-agent: *
-Disallow: /
+Allow: /
+
+Sitemap: https://oustaa.github.io/police-prep/sitemap.xml
