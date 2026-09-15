@@ -613,18 +613,19 @@ function pushOne(ins){
   try{ (window.adsbygoogle = window.adsbygoogle || []).push({}); }catch(e){}
   watchFill(ins);
 }
-/* AdSense stamps data-ad-status="unfilled" when it has nothing to serve
-   (always, until the site is approved). Collapse the container so the
-   page never shows an empty bordered placeholder. */
+/* Google stamps data-ad-status only when an ad is actually served. While a site
+   is pending review the slot is still processed (data-adsbygoogle-status becomes
+   "done") and space is reserved, but no status is ever set and the frame stays
+   empty — which is why testing for "unfilled" alone left a dead bordered box on
+   the page. Anything not explicitly "filled" within 20s gets collapsed. */
 function watchFill(ins){
   var box = ins.closest(".adbox");
   if(!box) return;
   var tries = 0;
   var iv = setInterval(function(){
     var st = ins.getAttribute("data-ad-status");
-    if(st === "unfilled"){ box.hidden = true; clearInterval(iv); }
-    else if(st === "filled"){ clearInterval(iv); }
-    else if(++tries > 20){ if(ins.getBoundingClientRect().height < 10) box.hidden = true; clearInterval(iv); }
+    if(st === "filled"){ box.hidden = false; clearInterval(iv); return; }
+    if(st === "unfilled" || ++tries > 40){ box.hidden = true; clearInterval(iv); }
   }, 500);
 }
 
