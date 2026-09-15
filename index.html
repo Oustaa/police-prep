@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="بنك أسئلة وملخصات لتحضير مباريات الأمن الوطني بالمغرب — Préparation au concours de la Sûreté nationale : 371 questions vérifiées et 14 fiches, en arabe et en français.">
+<meta name="description" content="بنك أسئلة وملخصات لتحضير مباريات الأمن الوطني بالمغرب — Préparation au concours de la Sûreté nationale : 432 questions vérifiées et 14 fiches, en arabe et en français.">
 <meta name="color-scheme" content="light dark">
 <meta name="google-adsense-account" content="ca-pub-9017597155293095">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9017597155293095" crossorigin="anonymous"></script>
 <meta property="og:title" content="تحضير مباراة الأمن الوطني">
-<meta property="og:description" content="371 questions vérifiées, simulation d'examen et 14 fiches — العربية / Français.">
+<meta property="og:description" content="432 questions vérifiées, simulation d'examen et 14 fiches — العربية / Français.">
 <meta property="og:type" content="website">
 <title>تحضير مباراة الأمن الوطني</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -406,7 +406,7 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
     <div class="crest">🛡</div>
     <div class="brand">
       <b>تحضير مباراة الأمن الوطني</b>
-      <span>371 سؤالا مُتحقَّقا · دورات 2016 / 2017 / 2019 · 14 ملخصا محيَّنا</span>
+      <span>383 سؤالا مُتحقَّقا · دورات 2016 · 2017 · 2019 · 2025 · 14 ملخصا</span>
     </div>
     <div class="langwrap" role="group" id="langWrap">
       <button type="button" data-lang="ar" aria-pressed="true">العربية</button>
@@ -451,6 +451,7 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
 "use strict";
 var BANK = window.BANK || [], SHEETS = window.SHEETS || [];
 /* questions are tagged by language: the Arabic paper and the French paper are different exams */
+function arCount(){ return BANK.filter(function(q){ return (q.lang || "ar") === "ar"; }).length; }
 function bank(){ return BANK.filter(function(q){ return (q.lang || "ar") === lang; }); }
 var KEYS = ["أ","ب","ج","د","هـ"];
 var LS = "dgsn-prep-v1";
@@ -460,7 +461,7 @@ var I18N = {
  ar:{
   dir:"rtl", htmlLang:"ar",
   brand:"تحضير مباراة الأمن الوطني",
-  tagline:"386 سؤالا مُتحقَّقا · دورات 2016 · 2017 · 2019 · 2025 · 14 ملخصا",
+  tagline:"{n} سؤالا مُتحقَّقا · دورات 2016 · 2017 · 2019 · 2025 · 14 ملخصا",
   theme:"تبديل السِّمة", reset:"تصفير التقدم",
   tabs:["لوحة التقدم","تدريب","محاكاة الامتحان","مراجعة الأخطاء","الملخصات"],
   eyebrowHome:"المديرية العامة للأمن الوطني", homeTitle:"لوحة التقدم",
@@ -508,7 +509,7 @@ var I18N = {
  fr:{
   dir:"ltr", htmlLang:"fr",
   brand:"Préparation au concours de la Sûreté nationale",
-  tagline:"49 questions · épreuve de français 2025 · 6 fiches en français",
+  tagline:"{n} questions · épreuve de français 2025 · 6 fiches en français",
   theme:"Changer de thème", reset:"Réinitialiser",
   tabs:["Tableau de bord","Entraînement","Simulation","Révision des erreurs","Fiches"],
   eyebrowHome:"Direction générale de la Sûreté nationale", homeTitle:"Tableau de bord",
@@ -521,7 +522,7 @@ var I18N = {
   cSheetsT:"Fiches", cSheetsD:"14 fiches : Constitution, procédure pénale, lexique juridique, plan sur 8 semaines…",
   masteryH:"Maîtrise par axe", masteryP:"Du plus faible au plus solide. Les axes non abordés figurent en bas.",
   qShort:" q.",
-  noteA:"<b>Ce mode contient l'épreuve écrite de français</b> du concours des inspecteurs de police (session du 7 décembre 2025), transcrite depuis le sujet et corrigée question par question. Les inspecteurs passent deux écrits : celui-ci et l'épreuve en arabe — basculez en العربية pour les 386 questions du bloc arabe. Questions rectifiées ici : ",
+  noteA:"<b>Ce mode contient l'épreuve écrite de français</b> du concours des inspecteurs de police (session du 7 décembre 2025), transcrite depuis le sujet et corrigée question par question. Les inspecteurs passent deux écrits : celui-ci et l'épreuve en arabe — basculez en العربية pour les {nAr} questions du bloc arabe. Questions rectifiées ici : ",
   noteB:".",
   drillEye:"Mode entraînement", drillTitle:"Choisissez vos axes de révision",
   drillLede:"La correction et l'explication s'affichent dès votre choix. Laissez la sélection vide pour couvrir tous les axes.",
@@ -623,7 +624,7 @@ function watchFill(ins){
     var st = ins.getAttribute("data-ad-status");
     if(st === "unfilled"){ box.hidden = true; clearInterval(iv); }
     else if(st === "filled"){ clearInterval(iv); }
-    else if(++tries > 20){ if(!ins.firstChild) box.hidden = true; clearInterval(iv); }
+    else if(++tries > 20){ if(ins.getBoundingClientRect().height < 10) box.hidden = true; clearInterval(iv); }
   }, 500);
 }
 
@@ -641,7 +642,7 @@ function applyLang(){
   root.setAttribute("lang", d.htmlLang);
   root.setAttribute("dir", d.dir);
   document.querySelector(".brand b").textContent = d.brand;
-  document.querySelector(".brand span").textContent = d.tagline;
+  document.querySelector(".brand span").textContent = d.tagline.replace("{n}", bank().length);
   document.getElementById("themeBtn").textContent = d.theme;
   document.getElementById("resetBtn").textContent = d.reset;
   Array.prototype.forEach.call(document.querySelectorAll(".tab"), function(b, i){
@@ -878,7 +879,7 @@ function renderHome(){
   });
   h += '</div></div>';
 
-  h += '<p class="note">'+t("noteA")+t("noteB")+'</p>';
+  h += '<p class="note">'+(t("noteA")+t("noteB")).replace("{nAr}", arCount())+'</p>';
 
   h += adUnit(ADS.slotDashboard);
 
