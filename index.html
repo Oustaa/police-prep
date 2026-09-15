@@ -283,6 +283,13 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
 .adlabel{display:block; font-size:10.5px; font-weight:600; letter-spacing:.1em;
   color:var(--muted); text-transform:uppercase; margin-bottom:8px}
 .adbox ins{min-height:90px}
+/* Until an ad actually fills, the slot keeps its full WIDTH — AdSense measures
+   width to build the request — but takes no vertical space and paints nothing.
+   Without this the box reserves 90px, AdSense stretches it to ~300px, and then
+   it disappears again: a flash of empty panel that shoves the page around. */
+.adbox.pending{margin:0; padding:0; border:0; background:none; height:0; overflow:hidden}
+.adbox.pending .adlabel{display:none}
+.adbox.pending ins{min-height:0}
 
 /* ---------- tablet ---------- */
 @media (max-width:780px){
@@ -584,7 +591,7 @@ function initAds(){
 }
 function adUnit(slot){
   if(!ADS.client || !slot) return "";
-  return '<aside class="adbox" aria-label="محتوى إعلاني">' +
+  return '<aside class="adbox pending" aria-label="محتوى إعلاني">' +
          '<span class="adlabel">' + t("adLabel") + '</span>' +
          '<ins class="adsbygoogle" style="display:block" data-ad-client="' + ADS.client +
          '" data-ad-slot="' + slot + '" data-ad-format="auto" data-full-width-responsive="true"></ins></aside>';
@@ -613,22 +620,19 @@ function pushOne(ins){
   try{ (window.adsbygoogle = window.adsbygoogle || []).push({}); }catch(e){}
   watchFill(ins);
 }
-/* Google stamps data-ad-status as soon as it has an answer — "filled" or
-   "unfilled". While a site is pending review it gives no answer at all: the slot
-   is processed, height is reserved, and the status attribute is simply never
-   set, which is how an empty bordered box ended up sitting on the page. So treat
-   a few seconds of silence as "nothing to show" and collapse, then keep watching
-   for a minute in case an ad turns up late and the box should come back. */
+/* The box starts in .pending — invisible and zero-height — so nothing has to be
+   torn down if no ad arrives. Reveal it only on an explicit "filled"; drop it
+   entirely on "unfilled". While a site is pending review Google sets neither,
+   and the slot simply stays invisible. */
 function watchFill(ins){
   var box = ins.closest(".adbox");
   if(!box) return;
   var tries = 0;
   var iv = setInterval(function(){
     var st = ins.getAttribute("data-ad-status");
-    if(st === "filled"){ box.hidden = false; clearInterval(iv); return; }
+    if(st === "filled"){ box.classList.remove("pending"); clearInterval(iv); return; }
     if(st === "unfilled"){ box.hidden = true; clearInterval(iv); return; }
-    if(++tries === 12) box.hidden = true;
-    if(tries > 120) clearInterval(iv);
+    if(++tries > 120) clearInterval(iv);
   }, 500);
 }
 
