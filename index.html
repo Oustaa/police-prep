@@ -404,6 +404,11 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
   #themeBtn, #resetBtn{font-size:12px; padding:9px 6px}
   .tab{padding:13px 10px; font-size:13px}
 }
+.sitefoot{max-width:1100px; margin:44px auto 0; padding:18px 18px 34px;
+  border-top:1px solid var(--line); color:var(--muted); font-size:12.5px; line-height:1.85; text-align:center}
+.sitefoot a{color:var(--muted); text-decoration:underline; text-underline-offset:2px}
+.sitefoot a:hover{color:var(--ink)}
+.sitefoot .disclaim{display:block; max-width:680px; margin:0 auto 10px}
 @media (prefers-reduced-motion:reduce){*{transition:none !important; animation:none !important}}
 </style>
 </head>
@@ -438,6 +443,11 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
   <section class="panel" id="p-weak" hidden></section>
   <section class="panel" id="p-sheets" hidden></section>
 </main>
+
+<footer class="sitefoot">
+  <span class="disclaim" id="footDisclaim"></span>
+  <a href="/privacy.html" id="footPrivacy">سياسة الخصوصية</a>
+</footer>
 
 <div class="scrim" id="scrim" hidden>
   <div class="dialog" role="alertdialog" aria-modal="true" aria-labelledby="dlgTitle" aria-describedby="dlgBody">
@@ -498,6 +508,8 @@ var I18N = {
   repBadge:"⭐ تكرر في {n} دورات",
   correctOfA:" صحيحة من ", examNoFeedback:"لا تصحيح قبل النهاية — كما في المباراة.",
   chooseHint:"اختر إجابة لعرض التصحيح والتعليل.",
+  footDisclaim:"موقع مستقل للمراجعة — لا تربطه أي علاقة بالمديرية العامة للأمن الوطني ولا بأي جهة رسمية. أسئلة الدورات السابقة متداولة علنا، والأجوبة والتعليلات من تحريرنا.",
+  footPrivacy:"سياسة الخصوصية وإخلاء المسؤولية",
   next:"التالي", nextQ:"السؤال التالي", skip:"تخطّي", finish:"إنهاء وعرض النتيجة",
   vGood:"✔ إجابة صحيحة", vBad:"✘ الجواب الصحيح: ",
   resExam:"نتيجة المحاكاة", resRound:"انتهت الجولة", resFrom:" إجابة صحيحة من ",
@@ -546,6 +558,8 @@ var I18N = {
   repBadge:"⭐ Tombée {n} fois",
   correctOfA:" correctes sur ", examNoFeedback:"Aucune correction avant la fin — comme au concours.",
   chooseHint:"Choisissez une réponse pour voir la correction et l'explication.",
+  footDisclaim:"Site de révision indépendant, sans aucun lien avec la Direction Générale de la Sûreté Nationale ni avec une autorité officielle. Les anciens sujets sont publiquement diffusés ; réponses et explications sont de notre rédaction.",
+  footPrivacy:"Politique de confidentialité",
   next:"Suivante", nextQ:"Question suivante", skip:"Passer", finish:"Terminer et voir le résultat",
   vGood:"✔ Bonne réponse", vBad:"✘ Réponse correcte : ",
   resExam:"Résultat de la simulation", resRound:"Série terminée", resFrom:" bonnes réponses sur ",
@@ -651,6 +665,8 @@ function applyLang(){
   root.setAttribute("dir", d.dir);
   document.querySelector(".brand b").textContent = d.brand;
   document.querySelector(".brand span").textContent = d.tagline.replace("{n}", bank().length);
+  document.getElementById("footDisclaim").textContent = d.footDisclaim;
+  document.getElementById("footPrivacy").textContent = d.footPrivacy;
   document.getElementById("themeBtn").textContent = d.theme;
   document.getElementById("resetBtn").textContent = d.reset;
   Array.prototype.forEach.call(document.querySelectorAll(".tab"), function(b, i){
