@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="بنك أسئلة وملخصات لتحضير مباريات الأمن الوطني بالمغرب — Préparation au concours de la Sûreté nationale : 371 questions vérifiées et 14 fiches, en arabe et en français.">
 <meta name="color-scheme" content="light dark">
+<meta name="google-adsense-account" content="ca-pub-9017597155293095">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9017597155293095" crossorigin="anonymous"></script>
 <meta property="og:title" content="تحضير مباراة الأمن الوطني">
 <meta property="og:description" content="371 questions vérifiées, simulation d'examen et 14 fiches — العربية / Français.">
 <meta property="og:type" content="website">
@@ -569,6 +571,10 @@ var adsReady = false;
 function initAds(){
   if(!ADS.client || adsReady) return;
   adsReady = true;
+  /* The built page carries the loader in <head> so the AdSense reviewer sees
+     it in the served HTML. Only inject when it is missing — i.e. when the
+     unbuilt source file is opened directly. */
+  if(document.querySelector('script[src*="adsbygoogle.js"]')) return;
   var s = document.createElement("script");
   s.async = true;
   s.crossOrigin = "anonymous";
@@ -586,12 +592,25 @@ function pushAds(el){
   if(!ADS.client) return;
   initAds();
   var units = el.querySelectorAll("ins.adsbygoogle");
-  for(var i = 0; i < units.length; i++){
-    if(units[i].getAttribute("data-filled")) continue;
-    units[i].setAttribute("data-filled", "1");
-    try{ (window.adsbygoogle = window.adsbygoogle || []).push({}); }catch(e){}
-    watchFill(units[i]);
+  for(var i = 0; i < units.length; i++) pushOne(units[i]);
+}
+/* Pushing a unit whose container is still zero-width makes AdSense throw
+   "No slot size for availableWidth=0", and that slot never recovers — it
+   happens whenever the panel is hidden at push time. Wait for a real width. */
+function pushOne(ins){
+  if(ins.getAttribute("data-filled")) return;
+  if(!ins.getBoundingClientRect().width){
+    if(typeof ResizeObserver === "function"){
+      var ro = new ResizeObserver(function(){
+        if(ins.getBoundingClientRect().width){ ro.disconnect(); pushOne(ins); }
+      });
+      ro.observe(ins);
+    }
+    return;
   }
+  ins.setAttribute("data-filled", "1");
+  try{ (window.adsbygoogle = window.adsbygoogle || []).push({}); }catch(e){}
+  watchFill(ins);
 }
 /* AdSense stamps data-ad-status="unfilled" when it has nothing to serve
    (always, until the site is approved). Collapse the container so the
@@ -693,6 +712,21 @@ document.getElementById("resetBtn").addEventListener("click", function(){
 function esc(s){ return String(s).replace(/[&<>"]/g, function(c){
   return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
 function shuffle(a){ a = a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+/* The papers print the options in a fixed order, so a question answered twice
+   is easy to pass by remembering "the third one" instead of the answer. Each
+   session gets its own copy of the question with the options permuted and the
+   answer index remapped; the bank object itself is never touched. */
+var PINNED = /^\s*(?:جميع الأجوبة|كل الأجوبة|جميع الإجابات|جميع ما سبق|كل ما سبق|جميع ما ذكر|لا شيء مما سبق|toutes les réponses|aucune de ces|aucune des réponses)/i;
+function shuffleOpts(q){
+  var n = q.opts.length, idx = [], pin = [];
+  for(var i=0;i<n;i++){ (PINNED.test(q.opts[i]) ? pin : idx).push(i); }
+  var order = shuffle(idx).concat(pin);   /* "all/none of the above" stays last */
+  var copy = {};
+  for(var k in q){ if(Object.prototype.hasOwnProperty.call(q,k)) copy[k] = q[k]; }
+  copy.opts = order.map(function(i){ return q.opts[i]; });
+  copy.a = order.indexOf(q.a);
+  return copy;
+}
 function cats(){
   var m = {};
   bank().forEach(function(q){ (m[q.cat] = m[q.cat] || []).push(q); });
@@ -731,7 +765,7 @@ function go(p){
 var session = null, timerId = null;
 
 function startSession(mode, queue, minutes){
-  session = {mode:mode, queue:queue, i:0, picked:null, answered:false,
+  session = {mode:mode, queue:queue.map(shuffleOpts), i:0, picked:null, answered:false,
              correct:0, log:[], active:true, endsAt: minutes ? Date.now()+minutes*60000 : null};
   if(timerId){ clearInterval(timerId); timerId = null; }
   if(minutes){
