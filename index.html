@@ -282,6 +282,32 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
   border:1px dashed var(--line-strong); border-radius:8px; background:var(--surface)}
 .adlabel{display:block; font-size:10.5px; font-weight:600; letter-spacing:.1em;
   color:var(--muted); text-transform:uppercase; margin-bottom:8px}
+.gradewrap{display:flex; align-items:center; gap:7px; font-size:12px; color:var(--muted)}
+.gradewrap select{font:inherit; font-size:12.5px; color:var(--ink-2); background:var(--surface);
+  border:1px solid var(--line-strong); border-radius:8px; padding:8px 9px; min-height:38px; max-width:190px}
+
+/* expandable wrong-answer review on the result screen */
+.wrongitem{border-bottom:1px solid var(--line)}
+.wrongitem:last-child{border-bottom:0}
+.wrongq{display:flex; gap:10px; align-items:center; width:100%; text-align:start; cursor:pointer;
+  background:none; border:0; color:inherit; font:inherit; padding:13px 15px; min-height:48px}
+.wrongq:hover{background:var(--surface-2)}
+.wrongq .qn{flex:1; font-size:13.5px; line-height:1.6}
+.wrongq .caret{color:var(--muted); font-size:11px; transition:transform .15s}
+.wrongq[aria-expanded="true"] .caret{transform:rotate(180deg)}
+.wrongq[aria-expanded="true"]{background:var(--surface-2)}
+.wrongdet{padding:4px 15px 16px; background:var(--surface-2)}
+.dopt{display:flex; gap:9px; align-items:flex-start; padding:9px 11px; margin-bottom:6px;
+  border:1px solid var(--line); border-radius:7px; font-size:13px; line-height:1.6}
+.dopt.right{border-color:var(--ok); background:var(--ok-soft)}
+.dopt.mine{border-color:var(--bad); background:var(--bad-soft)}
+.dopt .dk{font-weight:700; opacity:.75}
+.dopt .dtag{margin-inline-start:auto; font-size:10.5px; font-weight:700; white-space:nowrap; letter-spacing:.03em}
+.dopt.right .dtag{color:var(--ok)}
+.dopt.mine .dtag{color:var(--bad)}
+.dwhy{margin-top:9px; padding:11px 13px; border:1px solid var(--line); border-radius:8px;
+  background:var(--surface); font-size:13px; line-height:1.85}
+.dnone{font-size:12.5px; color:var(--bad); font-weight:600; margin:2px 0 8px}
 .adbox ins{min-height:90px}
 /* Until an ad actually fills, the slot keeps its full WIDTH — AdSense measures
    width to build the request — but takes no vertical space and paints nothing.
@@ -420,6 +446,9 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
       <b>تحضير مباراة الأمن الوطني</b>
       <span>383 سؤالا مُتحقَّقا · دورات 2016 · 2017 · 2019 · 2025 · 14 ملخصا</span>
     </div>
+    <label class="gradewrap"><span id="gradeLbl"></span>
+      <select id="gradeSel"></select>
+    </label>
     <div class="langwrap" role="group" id="langWrap">
       <button type="button" data-lang="ar" aria-pressed="true">العربية</button>
       <button type="button" data-lang="fr" aria-pressed="false">Français</button>
@@ -469,7 +498,21 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
 var BANK = window.BANK || [], SHEETS = window.SHEETS || [];
 /* questions are tagged by language: the Arabic paper and the French paper are different exams */
 function arCount(){ return BANK.filter(function(q){ return (q.lang || "ar") === "ar"; }).length; }
-function bank(){ return BANK.filter(function(q){ return (q.lang || "ar") === lang; }); }
+var GRADES = [["hrs","gHrs"],["mft","gMft"],["dba","gDba"],["dbt","gDbt"],["omd","gOmd"]];
+function gradeName(code){
+  for(var i=0;i<GRADES.length;i++){ if(GRADES[i][0] === code) return t(GRADES[i][1]); }
+  return code;
+}
+/* grade === "" means every cadre. A question is offered to a cadre when it was
+   actually set in that cadre's papers, or when its subject belongs to that
+   cadre's programme — see the tagging rules in the README. */
+function bank(){
+  return BANK.filter(function(q){
+    if((q.lang || "ar") !== lang) return false;
+    if(!grade) return true;
+    return (q.g || []).indexOf(grade) > -1;
+  });
+}
 var KEYS = ["أ","ب","ج","د","هـ"];
 var LS = "dgsn-prep-v1";
 
@@ -510,6 +553,11 @@ var I18N = {
   chooseHint:"اختر إجابة لعرض التصحيح والتعليل.",
   footDisclaim:"موقع مستقل للمراجعة — لا تربطه أي علاقة بالمديرية العامة للأمن الوطني ولا بأي جهة رسمية. أسئلة الدورات السابقة متداولة علنا، والأجوبة والتعليلات من تحريرنا.",
   footPrivacy:"سياسة الخصوصية وإخلاء المسؤولية",
+  gradeLbl:"السلك:", gradeAll:"كل الأسلاك",
+  gHrs:"حراس الأمن", gMft:"مفتشو الشرطة", gDba:"ضباط الأمن", gDbt:"ضباط الشرطة", gOmd:"عمداء الشرطة",
+  wrongHint:"اضغط على أي سؤال لعرض الجواب الصحيح وإجابتك والتعليل.",
+  dCorrect:"الجواب الصحيح", dMine:"إجابتك", dNone:"لم تجب عن هذا السؤال.",
+  needPick:"اختر إجابة قبل الانتقال",
   next:"التالي", nextQ:"السؤال التالي", skip:"تخطّي", finish:"إنهاء وعرض النتيجة",
   vGood:"✔ إجابة صحيحة", vBad:"✘ الجواب الصحيح: ",
   resExam:"نتيجة المحاكاة", resRound:"انتهت الجولة", resFrom:" إجابة صحيحة من ",
@@ -560,6 +608,12 @@ var I18N = {
   chooseHint:"Choisissez une réponse pour voir la correction et l'explication.",
   footDisclaim:"Site de révision indépendant, sans aucun lien avec la Direction Générale de la Sûreté Nationale ni avec une autorité officielle. Les anciens sujets sont publiquement diffusés ; réponses et explications sont de notre rédaction.",
   footPrivacy:"Politique de confidentialité",
+  gradeLbl:"Grade :", gradeAll:"Tous les grades",
+  gHrs:"Gardiens de la paix", gMft:"Inspecteurs de police", gDba:"Officiers de paix",
+  gDbt:"Officiers de police", gOmd:"Commissaires de police",
+  wrongHint:"Cliquez sur une question pour voir la bonne réponse, la vôtre et l'explication.",
+  dCorrect:"Bonne réponse", dMine:"Votre réponse", dNone:"Vous n'avez pas répondu.",
+  needPick:"Choisissez une réponse pour continuer",
   next:"Suivante", nextQ:"Question suivante", skip:"Passer", finish:"Terminer et voir le résultat",
   vGood:"✔ Bonne réponse", vBad:"✘ Réponse correcte : ",
   resExam:"Résultat de la simulation", resRound:"Série terminée", resFrom:" bonnes réponses sur ",
@@ -576,7 +630,7 @@ var I18N = {
   arOnly:"Cette fiche reproduit des textes juridiques marocains officiels, dont la version qui fait foi est en arabe. Elle est donc présentée dans sa langue d'origine."
  }
 };
-var lang = "ar";   // corrected after `store` is loaded below
+var lang = "ar", grade = "";   // corrected after `store` is loaded below
 function t(k){ return I18N[lang][k]; }
 function isFr(){ return lang === "fr"; }
 
@@ -655,6 +709,7 @@ var store = {seen:{}, theme:null};
 try{ var raw = localStorage.getItem(LS); if(raw) store = JSON.parse(raw); }catch(e){}
 if(!store.seen) store.seen = {};
 if(store.lang === "fr") lang = "fr";
+if(store.grade) grade = store.grade;
 function save(){ try{ localStorage.setItem(LS, JSON.stringify(store)); }catch(e){} }
 function rec(id){ return store.seen[id] || (store.seen[id] = {n:0, ok:0, box:0}); }
 
@@ -666,6 +721,11 @@ function applyLang(){
   document.querySelector(".brand b").textContent = d.brand;
   document.querySelector(".brand span").textContent = d.tagline.replace("{n}", bank().length);
   document.getElementById("footDisclaim").textContent = d.footDisclaim;
+  var gs = document.getElementById("gradeSel");
+  document.getElementById("gradeLbl").textContent = d.gradeLbl;
+  gs.innerHTML = '<option value="">' + esc(d.gradeAll) + '</option>' +
+    GRADES.map(function(g){ return '<option value="'+g[0]+'">' + esc(d[g[1]]) + '</option>'; }).join("");
+  gs.value = grade;
   document.getElementById("footPrivacy").textContent = d.footPrivacy;
   document.getElementById("themeBtn").textContent = d.theme;
   document.getElementById("resetBtn").textContent = d.reset;
@@ -728,6 +788,13 @@ document.getElementById("themeBtn").addEventListener("click", function(){
   if(!cur){ cur = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; }
   var next = cur === "dark" ? "light" : "dark";
   root.setAttribute("data-theme", next); store.theme = next; save();
+});
+document.getElementById("gradeSel").addEventListener("change", function(){
+  grade = this.value;
+  store.grade = grade; save();
+  session = null;                      /* a running session is built from the old pool */
+  drillSel = [];
+  applyLang(); render();
 });
 document.getElementById("resetBtn").addEventListener("click", function(){
   askConfirm(function(){ store.seen = {}; save(); render(); });
@@ -818,7 +885,7 @@ function answer(idx){
   var good = idx === q.a;
   if(good) session.correct++;
   var r = rec(q.id); r.n++; if(good){ r.ok++; r.box = Math.min(5, r.box+1); } else { r.box = 0; }
-  session.log.push({id:q.id, ok:good});
+  session.log.push({id:q.id, ok:good, qi:session.i, pick:idx});
   save(); render();
 }
 function next(){
@@ -830,7 +897,7 @@ function next(){
       if(good) session.correct++;
       var r = rec(q.id); r.n++; if(good){ r.ok++; r.box = Math.min(5, r.box+1); } else { r.box = 0; }
     }
-    session.log.push({id:q.id, ok:good, skipped: session.picked === null});
+    session.log.push({id:q.id, ok:good, skipped: session.picked === null, qi:session.i, pick:session.picked});
     save();
   }
   session.i++; session.picked = null; session.answered = false;
@@ -1024,8 +1091,14 @@ function quizHTML(){
   h += '</div>';
 
   h += '<article class="qcard'+(isFr()?' rtl-content':'')+'">';
-  h += '<div class="qmeta"><span class="chip src">'+esc(q.src)+'</span><span class="chip">'+esc(q.cat)+'</span>';
-  if(q.reps > 1) h += '<span class="chip rep" title="'+esc((q.srcs||[]).join(" · "))+'">'+t("repBadge").replace("{n}", q.reps)+'</span>';
+  h += '<div class="qmeta">';
+  /* Only real appearances are badged: a question drawn from the training file
+     and never set in a paper shows nothing rather than an invented provenance. */
+  (q.asked || []).forEach(function(a){
+    h += '<span class="chip src">'+esc(gradeName(a.g) + (a.y ? " · " + a.y : ""))+'</span>';
+  });
+  h += '<span class="chip">'+esc(q.cat)+'</span>';
+  if(q.reps > 1) h += '<span class="chip rep">'+t("repBadge").replace("{n}", q.reps)+'</span>';
   h += '</div>';
   h += '<h2 class="qtext">'+esc(q.q)+'</h2>';
   h += '<ul class="opts">';
@@ -1051,9 +1124,11 @@ function quizHTML(){
 
   h += '<div class="qfoot">';
   if(session.mode === "exam"){
-    h += '<button class="primary" data-next>'+(session.i+1 >= n ? t("finish") : t("nextQ"))+'</button>';
-    h += '<button class="secondary" data-next>'+t("skip")+'</button>';
-    h += '<span class="hint">'+t("examNoFeedback")+'</span>';
+    var picked = session.picked !== null;
+    h += '<button class="primary" data-next'+(picked?"":" disabled title=\""+esc(t("needPick"))+"\"")+'>'+
+         (session.i+1 >= n ? t("finish") : t("nextQ"))+'</button>';
+    h += '<button class="secondary" data-next data-skip>'+t("skip")+'</button>';
+    h += '<span class="hint">'+(picked ? t("examNoFeedback") : t("needPick"))+'</span>';
   } else if(session.answered){
     h += '<button class="primary" data-next>'+(session.i+1 >= n ? t("finish") : t("next"))+'</button>';
   } else {
@@ -1092,14 +1167,30 @@ function resultHTML(){
 
   var wrong = session.log.filter(function(x){ return !x.ok; });
   if(wrong.length){
-    h += '<div class="breakdown"><h3 style="font-size:15px; margin-bottom:10px">'+t("wrongH")+' ('+wrong.length+')</h3>';
+    h += '<div class="breakdown"><h3 style="font-size:15px; margin-bottom:4px">'+t("wrongH")+' ('+wrong.length+')</h3>';
+    h += '<p class="hint" style="margin:0 0 10px">'+t("wrongHint")+'</p>';
     h += '<div class="meter-list">';
-    wrong.slice(0, 25).forEach(function(x){
-      var q = BANK.filter(function(b){ return b.id === x.id; })[0];
+    wrong.forEach(function(x, wi){
+      /* Replay from the session queue, not the bank: that copy carries the option
+         order this candidate actually saw, so the letters match what they picked. */
+      var q = (x.qi != null) ? session.queue[x.qi] : null;
+      if(!q) q = BANK.filter(function(b){ return b.id === x.id; })[0];
       if(!q) return;
-      h += '<div class="meter'+(isFr()?' rtl-content':'')+'" style="grid-template-columns:1fr auto">';
-      h += '<span class="meter-name" style="white-space:normal" title="'+esc(q.q)+'">'+esc(q.q)+'</span>';
-      h += '<span class="chip">'+esc(q.cat)+'</span></div>';
+      h += '<div class="wrongitem'+(isFr()?' rtl-content':'')+'">';
+      h += '<button class="wrongq" data-wi="'+wi+'" aria-expanded="false" aria-controls="wd'+wi+'">';
+      h += '<span class="qn">'+esc(q.q)+'</span>';
+      h += '<span class="chip">'+esc(q.cat)+'</span><span class="caret">▼</span></button>';
+      h += '<div class="wrongdet" id="wd'+wi+'" hidden>';
+      if(x.pick == null) h += '<p class="dnone">'+t("dNone")+'</p>';
+      q.opts.forEach(function(o, oi){
+        var cls = "dopt", tag = "";
+        if(oi === q.a){ cls += " right"; tag = t("dCorrect"); }
+        else if(oi === x.pick){ cls += " mine"; tag = t("dMine"); }
+        h += '<div class="'+cls+'"><span class="dk">'+KEYS[oi]+'</span><span>'+esc(o)+'</span>'+
+             (tag ? '<span class="dtag">'+tag+'</span>' : '')+'</div>';
+      });
+      h += '<div class="dwhy">'+mdInline(q.why)+'</div>';
+      h += '</div></div>';
     });
     h += '</div></div>';
   }
@@ -1115,6 +1206,13 @@ function wireQuiz(el){
   });
   Array.prototype.forEach.call(el.querySelectorAll("[data-next]"), function(b){
     b.addEventListener("click", next);
+  });
+  Array.prototype.forEach.call(el.querySelectorAll(".wrongq"), function(b){
+    b.addEventListener("click", function(){
+      var open = b.getAttribute("aria-expanded") === "true";
+      b.setAttribute("aria-expanded", String(!open));
+      document.getElementById(b.getAttribute("aria-controls")).hidden = open;
+    });
   });
   var ag = el.querySelector("[data-again]");
   if(ag) ag.addEventListener("click", function(){ var m = session.mode; session = null; renderQuizPanel(m); });
@@ -1189,7 +1287,7 @@ document.addEventListener("keydown", function(e){
     var b = document.querySelector('.opt[data-i="'+i+'"]');
     if(b && !b.disabled){ b.click(); e.preventDefault(); }
   } else if(k === "Enter" || k === " "){
-    var nb = document.querySelector("[data-next]");
+    var nb = document.querySelector("[data-next]:not([disabled])");
     if(nb){ nb.click(); e.preventDefault(); }
   }
 });
