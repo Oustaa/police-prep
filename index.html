@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="بنك أسئلة وملخصات لتحضير مباريات الأمن الوطني بالمغرب — Préparation au concours de la Sûreté nationale : 531 questions vérifiées et 14 fiches, en arabe et en français.">
+<meta name="description" content="بنك أسئلة وملخصات لتحضير مباريات الأمن الوطني بالمغرب — Préparation au concours de la Sûreté nationale : 665 questions vérifiées et 14 fiches, en arabe et en français.">
 <meta name="color-scheme" content="light dark">
 <meta name="google-adsense-account" content="ca-pub-9017597155293095">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9017597155293095" crossorigin="anonymous"></script>
 <meta property="og:title" content="تحضير مباراة الأمن الوطني">
-<meta property="og:description" content="531 questions vérifiées, simulation d'examen et 14 fiches — العربية / Français.">
+<meta property="og:description" content="665 questions vérifiées, simulation d'examen et 14 fiches — العربية / Français.">
 <meta property="og:type" content="website">
 <title>تحضير مباراة الأمن الوطني</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -561,6 +561,9 @@ var I18N = {
   wrongHint:"اضغط على أي سؤال لعرض الجواب الصحيح وإجابتك والتعليل.",
   dCorrect:"الجواب الصحيح", dMine:"إجابتك", dNone:"لم تجب عن هذا السؤال.",
   needPick:"اختر إجابة قبل الانتقال",
+  endNow:"إنهاء الجلسة", endAsk:"هل تنهي الجلسة الآن؟ ستُحتسب النتيجة على الأسئلة التي أجبت عنها فقط.",
+  resReached:"أجبت عن {a} من {n} سؤالا متاحا في هذه الجولة.", resNone:"لم تجب عن أي سؤال في هذه الجلسة.",
+  resOf:"جلسة مُنهاة مبكرا",
   next:"التالي", nextQ:"السؤال التالي", skip:"تخطّي", finish:"إنهاء وعرض النتيجة",
   vGood:"✔ إجابة صحيحة", vBad:"✘ الجواب الصحيح: ",
   resExam:"نتيجة المحاكاة", resRound:"انتهت الجولة", resFrom:" إجابة صحيحة من ",
@@ -618,6 +621,9 @@ var I18N = {
   wrongHint:"Cliquez sur une question pour voir la bonne réponse, la vôtre et l'explication.",
   dCorrect:"Bonne réponse", dMine:"Votre réponse", dNone:"Vous n'avez pas répondu.",
   needPick:"Choisissez une réponse pour continuer",
+  endNow:"Terminer la session", endAsk:"Terminer la session maintenant ? Le score ne portera que sur les questions auxquelles vous avez répondu.",
+  resReached:"Vous avez répondu à {a} des {n} questions de ce tour.", resNone:"Vous n'avez répondu à aucune question.",
+  resOf:"Session terminée plus tôt",
   next:"Suivante", nextQ:"Question suivante", skip:"Passer", finish:"Terminer et voir le résultat",
   vGood:"✔ Bonne réponse", vBad:"✘ Réponse correcte : ",
   resExam:"Résultat de la simulation", resRound:"Série terminée", resFrom:" bonnes réponses sur ",
@@ -910,6 +916,19 @@ function next(){
   if(session.i >= session.queue.length){ session.active = false; if(timerId){clearInterval(timerId); timerId=null;} }
   render();
 }
+/* Ending early is scored on what the candidate actually reached, never on the
+   size of the queue they were handed — a 6-of-10 round is 60%, not 12% of 50. */
+function endSession(){
+  if(!session) return;
+  var finish = function(){
+    if(timerId){ clearInterval(timerId); timerId = null; }
+    session.active = false;
+    session.endedEarly = true;
+    render();
+    window.scrollTo({top:0, behavior:"instant"});
+  };
+  if(session.mode === "exam") askEnd(finish); else finish();
+}
 function endExam(silent){
   if(!session) return;
   if(timerId){ clearInterval(timerId); timerId = null; }
@@ -1140,6 +1159,7 @@ function quizHTML(){
   } else {
     h += '<span class="hint">'+t("chooseHint")+'</span>';
   }
+  if(session.log.length) h += '<button class="ghost" data-end>'+t("endNow")+'</button>';
   h += '</div></article>';
   return h;
 }
@@ -1151,14 +1171,26 @@ function mdInline(s){
 }
 
 function resultHTML(){
-  var n = session.log.length || session.queue.length;
+  var n = session.log.length;                 /* answered, not handed out */
   var pct = n ? Math.round(session.correct / n * 100) : 0;
   var pass = pct >= 50;
   var h = '';
   h += '<div class="result">';
-  h += '<p class="eyebrow">'+(session.mode === "exam" ? t("resExam") : t("resRound"))+'</p>';
+  h += '<p class="eyebrow">'+(session.endedEarly ? t("resOf")
+        : (session.mode === "exam" ? t("resExam") : t("resRound")))+'</p>';
+  if(!n){
+    h += '<p class="verdict-line">'+t("resNone")+'</p>';
+    h += '<div class="qfoot" style="justify-content:center">';
+    h += '<button class="primary" data-again>'+t("again")+'</button>';
+    h += '<button class="secondary" data-goto="home">'+t("goHome")+'</button>';
+    h += '</div></div>';
+    return h;
+  }
   h += '<div class="big-score num '+(pass?"pass":"fail")+'">'+pct+'%</div>';
   h += '<p class="verdict-line num">'+session.correct+t("resFrom")+n+'</p>';
+  if(session.endedEarly)
+    h += '<p class="hint" style="margin:-4px 0 10px">'+
+         esc(t("resReached").replace("{a}", n).replace("{n}", session.queue.length))+'</p>';
   var msg;
   if(pct >= 85) msg = t("m85");
   else if(pct >= 70) msg = t("m70");
@@ -1213,6 +1245,8 @@ function wireQuiz(el){
   Array.prototype.forEach.call(el.querySelectorAll("[data-next]"), function(b){
     b.addEventListener("click", next);
   });
+  var endBtn = el.querySelector("[data-end]");
+  if(endBtn) endBtn.addEventListener("click", endSession);
   Array.prototype.forEach.call(el.querySelectorAll(".wrongq"), function(b){
     b.addEventListener("click", function(){
       var open = b.getAttribute("aria-expanded") === "true";
@@ -1235,6 +1269,18 @@ function sheetList(){
   return SHEETS.slice().sort(function(a,b){
     return (b.md_fr ? 1 : 0) - (a.md_fr ? 1 : 0);
   });
+}
+function askEnd(onOk){
+  var d = I18N[lang];
+  document.getElementById("dlgTitle").textContent = d.endNow;
+  document.getElementById("dlgBody").textContent = d.endAsk;
+  document.getElementById("dlgWarn").textContent = "";
+  document.getElementById("dlgCancel").textContent = d.dlgCancel;
+  document.getElementById("dlgOk").textContent = d.dlgOk;
+  dlgOnOk = onOk;
+  dlgLastFocus = document.activeElement;
+  scrim.hidden = false;
+  document.getElementById("dlgCancel").focus();
 }
 function askLeaveExam(onOk){
   var d = I18N[lang];
