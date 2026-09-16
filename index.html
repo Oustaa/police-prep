@@ -449,6 +449,9 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
     <label class="gradewrap"><span id="gradeLbl"></span>
       <select id="gradeSel"></select>
     </label>
+    <label class="gradewrap"><span id="srcLbl"></span>
+      <select id="srcSel"></select>
+    </label>
     <div class="langwrap" role="group" id="langWrap">
       <button type="button" data-lang="ar" aria-pressed="true">العربية</button>
       <button type="button" data-lang="fr" aria-pressed="false">Français</button>
@@ -508,11 +511,16 @@ function gradeName(code){
 /* grade === "" means every cadre. A question is offered to a cadre when it was
    actually set in that cadre's papers, or when its subject belongs to that
    cadre's programme — see the tagging rules in the README. */
+/* "papers" = questions that actually appeared in a past session, which is what
+   q.asked records. Everything else is the training file plus what we wrote. */
 function bank(){
   return BANK.filter(function(q){
     if((q.lang || "ar") !== lang) return false;
-    if(!grade) return true;
-    return (q.g || []).indexOf(grade) > -1;
+    if(grade && (q.g || []).indexOf(grade) === -1) return false;
+    var fromPaper = (q.asked || []).length > 0;
+    if(source === "papers" && !fromPaper) return false;
+    if(source === "ours" && fromPaper) return false;
+    return true;
   });
 }
 var KEYS = ["أ","ب","ج","د","هـ"];
@@ -557,6 +565,7 @@ var I18N = {
   footPapers:"أسئلة الدورات السابقة", footSheets:"الملخصات",
   footPrivacy:"سياسة الخصوصية وإخلاء المسؤولية",
   gradeLbl:"السلك:", gradeAll:"كل الأسلاك",
+  srcLbl:"المصدر:", srcAll:"كل الأسئلة", srcPapers:"أسئلة الدورات السابقة", srcOurs:"أسئلة من إعدادنا",
   gHrs:"حراس الأمن", gMft:"مفتشو الشرطة", gDba:"ضباط الأمن", gDbt:"ضباط الشرطة", gOmd:"عمداء الشرطة",
   wrongHint:"اضغط على أي سؤال لعرض الجواب الصحيح وإجابتك والتعليل.",
   dCorrect:"الجواب الصحيح", dMine:"إجابتك", dNone:"لم تجب عن هذا السؤال.",
@@ -616,6 +625,7 @@ var I18N = {
   footPapers:"Anciens sujets corrigés", footSheets:"Fiches de révision",
   footPrivacy:"Politique de confidentialité",
   gradeLbl:"Grade :", gradeAll:"Tous les grades",
+  srcLbl:"Source :", srcAll:"Toutes les questions", srcPapers:"Sujets des sessions passées", srcOurs:"Questions rédigées par nous",
   gHrs:"Gardiens de la paix", gMft:"Inspecteurs de police", gDba:"Officiers de paix",
   gDbt:"Officiers de police", gOmd:"Commissaires de police",
   wrongHint:"Cliquez sur une question pour voir la bonne réponse, la vôtre et l'explication.",
@@ -640,7 +650,7 @@ var I18N = {
   arOnly:"Cette fiche reproduit des textes juridiques marocains officiels, dont la version qui fait foi est en arabe. Elle est donc présentée dans sa langue d'origine."
  }
 };
-var lang = "ar", grade = "";   // corrected after `store` is loaded below
+var lang = "ar", grade = "", source = "";   // corrected after `store` is loaded below
 function t(k){ return I18N[lang][k]; }
 function isFr(){ return lang === "fr"; }
 
@@ -720,6 +730,7 @@ try{ var raw = localStorage.getItem(LS); if(raw) store = JSON.parse(raw); }catch
 if(!store.seen) store.seen = {};
 if(store.lang === "fr") lang = "fr";
 if(store.grade) grade = store.grade;
+if(store.source) source = store.source;
 function save(){ try{ localStorage.setItem(LS, JSON.stringify(store)); }catch(e){} }
 function rec(id){ return store.seen[id] || (store.seen[id] = {n:0, ok:0, box:0}); }
 
@@ -736,6 +747,12 @@ function applyLang(){
   gs.innerHTML = '<option value="">' + esc(d.gradeAll) + '</option>' +
     GRADES.map(function(g){ return '<option value="'+g[0]+'">' + esc(d[g[1]]) + '</option>'; }).join("");
   gs.value = grade;
+  var ss = document.getElementById("srcSel");
+  document.getElementById("srcLbl").textContent = d.srcLbl;
+  ss.innerHTML = '<option value="">'+esc(d.srcAll)+'</option>'+
+                 '<option value="papers">'+esc(d.srcPapers)+'</option>'+
+                 '<option value="ours">'+esc(d.srcOurs)+'</option>';
+  ss.value = source;
   document.getElementById("footPrivacy").textContent = d.footPrivacy;
   document.getElementById("footPapers").textContent = d.footPapers;
   document.getElementById("footSheets").textContent = d.footSheets;
@@ -800,6 +817,12 @@ document.getElementById("themeBtn").addEventListener("click", function(){
   if(!cur){ cur = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; }
   var next = cur === "dark" ? "light" : "dark";
   root.setAttribute("data-theme", next); store.theme = next; save();
+});
+document.getElementById("srcSel").addEventListener("change", function(){
+  source = this.value;
+  store.source = source; save();
+  session = null; drillSel = [];
+  applyLang(); render();
 });
 document.getElementById("gradeSel").addEventListener("change", function(){
   grade = this.value;
