@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="بنك أسئلة وملخصات لتحضير مباريات الأمن الوطني بالمغرب — Préparation au concours de la Sûreté nationale : 432 questions vérifiées et 14 fiches, en arabe et en français.">
+<meta name="description" content="بنك أسئلة وملخصات لتحضير مباريات الأمن الوطني بالمغرب — Préparation au concours de la Sûreté nationale : 531 questions vérifiées et 14 fiches, en arabe et en français.">
 <meta name="color-scheme" content="light dark">
 <meta name="google-adsense-account" content="ca-pub-9017597155293095">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9017597155293095" crossorigin="anonymous"></script>
 <meta property="og:title" content="تحضير مباراة الأمن الوطني">
-<meta property="og:description" content="432 questions vérifiées, simulation d'examen et 14 fiches — العربية / Français.">
+<meta property="og:description" content="531 questions vérifiées, simulation d'examen et 14 fiches — العربية / Français.">
 <meta property="og:type" content="website">
 <title>تحضير مباراة الأمن الوطني</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -475,6 +475,8 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
 
 <footer class="sitefoot">
   <span class="disclaim" id="footDisclaim"></span>
+  <a href="/questions/" id="footPapers">أسئلة الدورات السابقة</a> ·
+  <a href="/fiches/" id="footSheets">الملخصات</a> ·
   <a href="/privacy.html" id="footPrivacy">سياسة الخصوصية</a>
 </footer>
 
@@ -552,6 +554,7 @@ var I18N = {
   correctOfA:" صحيحة من ", examNoFeedback:"لا تصحيح قبل النهاية — كما في المباراة.",
   chooseHint:"اختر إجابة لعرض التصحيح والتعليل.",
   footDisclaim:"موقع مستقل للمراجعة — لا تربطه أي علاقة بالمديرية العامة للأمن الوطني ولا بأي جهة رسمية. أسئلة الدورات السابقة متداولة علنا، والأجوبة والتعليلات من تحريرنا.",
+  footPapers:"أسئلة الدورات السابقة", footSheets:"الملخصات",
   footPrivacy:"سياسة الخصوصية وإخلاء المسؤولية",
   gradeLbl:"السلك:", gradeAll:"كل الأسلاك",
   gHrs:"حراس الأمن", gMft:"مفتشو الشرطة", gDba:"ضباط الأمن", gDbt:"ضباط الشرطة", gOmd:"عمداء الشرطة",
@@ -607,6 +610,7 @@ var I18N = {
   correctOfA:" correctes sur ", examNoFeedback:"Aucune correction avant la fin — comme au concours.",
   chooseHint:"Choisissez une réponse pour voir la correction et l'explication.",
   footDisclaim:"Site de révision indépendant, sans aucun lien avec la Direction Générale de la Sûreté Nationale ni avec une autorité officielle. Les anciens sujets sont publiquement diffusés ; réponses et explications sont de notre rédaction.",
+  footPapers:"Anciens sujets corrigés", footSheets:"Fiches de révision",
   footPrivacy:"Politique de confidentialité",
   gradeLbl:"Grade :", gradeAll:"Tous les grades",
   gHrs:"Gardiens de la paix", gMft:"Inspecteurs de police", gDba:"Officiers de paix",
@@ -727,6 +731,8 @@ function applyLang(){
     GRADES.map(function(g){ return '<option value="'+g[0]+'">' + esc(d[g[1]]) + '</option>'; }).join("");
   gs.value = grade;
   document.getElementById("footPrivacy").textContent = d.footPrivacy;
+  document.getElementById("footPapers").textContent = d.footPapers;
+  document.getElementById("footSheets").textContent = d.footSheets;
   document.getElementById("themeBtn").textContent = d.theme;
   document.getElementById("resetBtn").textContent = d.reset;
   Array.prototype.forEach.call(document.querySelectorAll(".tab"), function(b, i){

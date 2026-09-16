@@ -1,4 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://prepare-dgsn.ousta.dev/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/</loc><priority>1.0</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/privacy.html</loc><priority>0.3</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/questions/gardiens-2016.html</loc><priority>0.8</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/questions/gardiens-2019.html</loc><priority>0.8</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/questions/inspecteurs-2019.html</loc><priority>0.8</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/questions/inspecteurs-2025.html</loc><priority>0.8</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/questions/officiers-2019.html</loc><priority>0.8</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/questions/commissaires-2016.html</loc><priority>0.8</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/questions/commissaires-2017.html</loc><priority>0.8</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/questions/commissaires-2019.html</loc><priority>0.8</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/questions/inspecteurs-2025-francais.html</loc><priority>0.8</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/questions/</loc><priority>0.9</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/fiches/plan-de-revision.html</loc><priority>0.7</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/fiches/structure-du-concours.html</loc><priority>0.7</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/fiches/dossier-de-candidature.html</loc><priority>0.7</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/fiches/methodologie-dissertation.html</loc><priority>0.7</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/fiches/constitution-2011.html</loc><priority>0.7</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/fiches/code-de-la-nationalite.html</loc><priority>0.7</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/fiches/organisation-judiciaire.html</loc><priority>0.7</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/fiches/code-penal.html</loc><priority>0.7</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/fiches/procedure-penale.html</loc><priority>0.7</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/fiches/code-de-la-famille.html</loc><priority>0.7</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/fiches/libertes-publiques.html</loc><priority>0.7</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/fiches/sujets-de-dissertation.html</loc><priority>0.7</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/fiches/lexique-juridique.html</loc><priority>0.7</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/fiches/oral-et-sport.html</loc><priority>0.7</priority></url>
+  <url><loc>https://prepare-dgsn.ousta.dev/fiches/</loc><priority>0.9</priority></url>
 </urlset>
