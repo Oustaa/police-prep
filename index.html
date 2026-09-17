@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="بنك أسئلة وملخصات لتحضير مباريات الأمن الوطني بالمغرب — Préparation au concours de la Sûreté nationale : 884 questions vérifiées et 14 fiches, en arabe et en français.">
+<meta name="description" content="بنك أسئلة وملخصات لتحضير مباريات الأمن الوطني بالمغرب — Préparation au concours de la Sûreté nationale : 884 questions vérifiées et 16 fiches, en arabe et en français.">
 <meta name="color-scheme" content="light dark">
 <meta name="google-adsense-account" content="ca-pub-9017597155293095">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9017597155293095" crossorigin="anonymous"></script>
 <meta property="og:title" content="تحضير مباراة الأمن الوطني">
-<meta property="og:description" content="884 questions vérifiées, simulation d'examen et 14 fiches — العربية / Français.">
+<meta property="og:description" content="884 questions vérifiées, simulation d'examen et 16 fiches — العربية / Français.">
 <meta property="og:type" content="website">
 <title>تحضير مباراة الأمن الوطني</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -444,7 +444,7 @@ main{max-width:1080px; margin:0 auto; padding:26px 20px 72px}
     <div class="crest">🛡</div>
     <div class="brand">
       <b>تحضير مباراة الأمن الوطني</b>
-      <span>383 سؤالا مُتحقَّقا · دورات 2016 · 2017 · 2019 · 2025 · 14 ملخصا</span>
+      <span>835 سؤالا مُتحقَّقا · دورات 2016 · 2017 · 2019 · 2025 · 16 ملخصا</span>
     </div>
     <label class="gradewrap"><span id="gradeLbl"></span>
       <select id="gradeSel"></select>
@@ -531,7 +531,7 @@ var I18N = {
  ar:{
   dir:"rtl", htmlLang:"ar",
   brand:"تحضير مباراة الأمن الوطني",
-  tagline:"{n} سؤالا مُتحقَّقا · دورات 2016 · 2017 · 2019 · 2025 · 14 ملخصا",
+  tagline:"{n} سؤالا مُتحقَّقا · دورات 2016 · 2017 · 2019 · 2025 · {s} ملخصا",
   theme:"تبديل السِّمة", reset:"تصفير التقدم",
   tabs:["لوحة التقدم","تدريب","محاكاة الامتحان","مراجعة الأخطاء","الملخصات"],
   eyebrowHome:"المديرية العامة للأمن الوطني", homeTitle:"لوحة التقدم",
@@ -541,7 +541,7 @@ var I18N = {
   cExamT:"محاكاة الامتحان", cExamD:"50 سؤالا في 60 دقيقة — نفس شروط الاختبار الكتابي الحقيقي.",
   cWeakT:"مراجعة الأخطاء", cWeakD0:"لا أخطاء مسجلة بعد", cWeakDn:" سؤالا أخطأت فيها",
   cWeakTail:" — الأولوية لما نسيته.",
-  cSheetsT:"الملخصات", cSheetsD:"14 ملخصا: الدستور، المسطرة الجنائية، المعجم القانوني، خطة 8 أسابيع…",
+  cSheetsT:"الملخصات", cSheetsD:"{s} ملخصا: الدستور، المسطرة الجنائية، تاريخ المغرب، جغرافيا المغرب، المعجم القانوني…",
   masteryH:"الإتقان حسب المحور", masteryP:"مرتَّبة من الأضعف إلى الأقوى. المحاور غير المطروقة في الأسفل.",
   qShort:" س",
   noteA:"<b>عن الأجوبة:</b> أوراق الدورات تُنشر بدون شبكة تصحيح رسمية، فحُرِّرت الأجوبة والتعليلات هنا انطلاقا من النصوص القانونية الجاري بها العمل ومن مصادر رسمية مُحيَّنة. راجَعنا كل سؤال مشكوك فيه وصحّحنا ما يستوجب التصحيح — وسبب كل تصحيح مذكور داخل تعليل السؤال نفسه. وحُذفت الأسئلة التي تعذّر التحقق منها.",
@@ -601,7 +601,7 @@ var I18N = {
   cExamT:"Simulation d'examen", cExamD:"50 questions en 60 minutes — les conditions réelles de l'épreuve écrite.",
   cWeakT:"Révision des erreurs", cWeakD0:"Aucune erreur enregistrée", cWeakDn:" questions manquées",
   cWeakTail:" — priorité à ce que vous avez oublié.",
-  cSheetsT:"Fiches", cSheetsD:"14 fiches : Constitution, procédure pénale, lexique juridique, plan sur 8 semaines…",
+  cSheetsT:"Fiches", cSheetsD:"{s} fiches : Constitution, procédure pénale, histoire et géographie du Maroc, lexique…",
   masteryH:"Maîtrise par axe", masteryP:"Du plus faible au plus solide. Les axes non abordés figurent en bas.",
   qShort:" q.",
   noteA:"<b>Ce mode contient l'épreuve écrite de français</b> du concours des inspecteurs de police (session du 7 décembre 2025), transcrite depuis le sujet et corrigée question par question. Les inspecteurs passent deux écrits : celui-ci et l'épreuve en arabe — basculez en العربية pour les {nAr} questions du bloc arabe. Questions rectifiées ici : ",
@@ -740,7 +740,8 @@ function applyLang(){
   root.setAttribute("lang", d.htmlLang);
   root.setAttribute("dir", d.dir);
   document.querySelector(".brand b").textContent = d.brand;
-  document.querySelector(".brand span").textContent = d.tagline.replace("{n}", bank().length);
+  document.querySelector(".brand span").textContent =
+    d.tagline.replace("{n}", bank().length).replace("{s}", SHEETS.length);
   document.getElementById("footDisclaim").textContent = d.footDisclaim;
   var gs = document.getElementById("gradeSel");
   document.getElementById("gradeLbl").textContent = d.gradeLbl;
@@ -1002,7 +1003,8 @@ function renderHome(){
   h += '<button class="card-btn" data-go="drill"><b>'+t("cDrillT")+'</b><span>'+t("cDrillD")+'</span></button>';
   h += '<button class="card-btn" data-go="exam"><b>'+t("cExamT")+'</b><span>'+t("cExamD")+'</span></button>';
   h += '<button class="card-btn" data-go="weak"><b>'+t("cWeakT")+'</b><span>'+(weak ? weak+t("cWeakDn") : t("cWeakD0"))+t("cWeakTail")+'</span></button>';
-  h += '<button class="card-btn" data-go="sheets"><b>'+t("cSheetsT")+'</b><span>'+t("cSheetsD")+'</span></button>';
+  h += '<button class="card-btn" data-go="sheets"><b>'+t("cSheetsT")+'</b><span>'+
+       t("cSheetsD").replace("{s}", SHEETS.length)+'</span></button>';
   h += '</div>';
 
   h += '<div class="sec"><h2>'+t("masteryH")+'</h2>';
