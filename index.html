@@ -708,17 +708,27 @@ function pushOne(ins){
   try{ (window.adsbygoogle = window.adsbygoogle || []).push({}); }catch(e){}
   watchFill(ins);
 }
-/* The box starts in .pending — invisible and zero-height — so nothing has to be
-   torn down if no ad arrives. Reveal it only on an explicit "filled"; drop it
-   entirely on "unfilled". While a site is pending review Google sets neither,
-   and the slot simply stays invisible. */
+/* The box starts in .pending - invisible and zero-height - so nothing has to be
+   torn down if no ad arrives. Two independent signals can reveal it:
+     1. Google stamps data-ad-status="filled".
+     2. The unit grows real height, i.e. an ad actually rendered.
+   The second is a safety net: the pending container is zero-height, and if that
+   ever made Google withhold the status stamp we would still show a real ad
+   rather than hide it. Anything else stays invisible. */
 function watchFill(ins){
   var box = ins.closest(".adbox");
   if(!box) return;
+  var reveal = function(){ box.hidden = false; box.classList.remove("pending"); };
+  if(typeof ResizeObserver === "function"){
+    var ro = new ResizeObserver(function(){
+      if(ins.getBoundingClientRect().height > 50){ ro.disconnect(); reveal(); }
+    });
+    ro.observe(ins);
+  }
   var tries = 0;
   var iv = setInterval(function(){
     var st = ins.getAttribute("data-ad-status");
-    if(st === "filled"){ box.classList.remove("pending"); clearInterval(iv); return; }
+    if(st === "filled"){ reveal(); clearInterval(iv); return; }
     if(st === "unfilled"){ box.hidden = true; clearInterval(iv); return; }
     if(++tries > 120) clearInterval(iv);
   }, 500);
